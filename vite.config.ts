@@ -78,6 +78,11 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         //   changeOrigin: true,
         //   rewrite: path => path.replace(/^\/api/, "")
         // }
+        '/user': {
+          target: 'http://localhost:9002',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/user/, ""),
+        }
       },
     },
     // 生产环境打包配置

@@ -11,11 +11,11 @@
       <el-form-item label="姓名">
         <el-input v-model="ruleForm.name" disabled></el-input>
       </el-form-item>
-      <el-form-item label="旧的密码" prop="password">
-        <el-input v-model="ruleForm.password" type="password"></el-input>
+      <el-form-item label="新密码" prop="password">
+        <el-input v-model="ruleForm.newPassword" type="password"></el-input>
       </el-form-item>
-      <el-form-item label="新的密码" prop="configPassword">
-        <el-input v-model="ruleForm.configPassword" type="password"></el-input>
+      <el-form-item label="确认密码" prop="configPassword">
+        <el-input v-model="ruleForm.confirmPassword" type="password"></el-input>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -31,6 +31,12 @@
   import { ref, defineExpose, reactive } from 'vue'
   import type { ElForm } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
+  import { ElNotification } from 'element-plus';
+  import type { FormInstance } from 'element-plus';
+  import {getTimeState} from "@/utils";
+
+
+  import {resetPassword} from '@/api/user'
 
   const dialogVisible = ref(false)
   const UserStore = useUserStore()
@@ -40,29 +46,66 @@
   const hide = () => {
     dialogVisible.value = false
   }
-  type FormInstance = InstanceType<typeof ElForm>
+  // type FormInstance = InstanceType<typeof ElForm>
 
   const formSize = ref('')
   const ruleFormRef = ref<FormInstance>()
   const ruleForm = reactive({
     name: UserStore.userInfo.username,
-    password: UserStore.userInfo.password,
-    configPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   })
+
+  const methods = {
+    validateConfirmPassword: (_, value) => {
+      if (value === ruleForm.newPassword) {
+        console.log(ruleForm.newPassword)
+        console.log(value)
+        return Promise.resolve();
+      } else {
+        console.log(ruleForm.newPassword)
+        console.log(value)
+        return Promise.reject(new Error('两次密码输入不一致'));
+      }
+    }
+  }
+
   const rules = reactive({
-    configPassword: [
+    newPassword: [
       {
         required: true,
         message: '请输入新的密码',
         trigger: 'blur',
-      },
+      }
+    ],
+    confirmPassword: [
+      {required: true, message: '请再次输入新的密码', trigger: 'blur'},
+      {validator: methods.validateConfirmPassword, trigger: 'blur'}
     ],
   })
+
+
   const submitForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return
-    formEl.validate((valid) => {
+    formEl.validate(async (valid) => {
       if (valid) {
-        console.log('submit!')
+        if (ruleForm.newPassword===ruleForm.confirmPassword){
+          let email=UserStore.userInfo.email
+          let token=UserStore.userInfo.token
+          let resetMsg=await resetPassword(email,ruleForm.confirmPassword,token)
+          if (resetMsg.code==0) {
+            hide()
+            ElNotification({
+              title: getTimeState(),
+              message: '更改密码成功',
+              type: 'success',
+              duration: 2000,
+            });
+          }
+          console.log('submit!')
+        }else {
+          console.log('error!')
+        }
       } else {
         console.log('error submit!')
         return false

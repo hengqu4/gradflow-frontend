@@ -22,7 +22,7 @@ service.interceptors.request.use(
     const token: string = userStore.token
     // 自定义请求头
     if (token) {
-      config.headers['Authorization'] = token
+      config.headers['token'] = token
     }
     return config
   },
@@ -34,10 +34,12 @@ service.interceptors.request.use(
 
 //  response interceptor 接口响应拦截
 service.interceptors.response.use(
-  (response: AxiosResponse) => {
+    (response: AxiosResponse<any>)=> {
     // 直接返回res，当然你也可以只返回res.data
     // 系统如果有自定义code也可以在这里处理
-    return response
+    if(response.data.code==0) {
+        return response
+    }
   },
   (error: AxiosError) => {
     return Promise.reject(error)

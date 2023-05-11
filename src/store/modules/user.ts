@@ -1,4 +1,7 @@
 import { defineStore } from 'pinia'
+import {login,logout} from '@/api/user'
+import {createBScroll} from "@better-scroll/core";
+import use = createBScroll.use;
 
 export const useUserStore = defineStore({
   // id: 必须的，在所有 Store 中唯一
@@ -16,20 +19,26 @@ export const useUserStore = defineStore({
   // 可以同步 也可以异步
   actions: {
     // 登录
-    login(userInfo) {
-      const { username, password } = userInfo
-      return new Promise(async (resolve, reject) => {
-        this.token = username
-        this.userInfo = userInfo
-        await this.getRoles()
-        resolve(username)
-      })
+    async userLogin(userInfo) {
+      const { email, password } = userInfo
+      let currentUser=await login(userInfo);
+      this.token = currentUser.token
+      this.userInfo = currentUser.data
+      await this.getRoles()
+      // return new Promise(async (resolve, reject) => {
+      //   let currentUser=await login(userInfo);
+      //   console.log(currentUser)
+      //   // this.token = email
+      //   // this.userInfo = userInfo
+      //   // await this.getRoles()
+      //   resolve(email)
+      // })
     },
     // 获取用户授权角色信息，实际应用中 可以通过token通过请求接口在这里获取用户信息
     getRoles() {
       return new Promise((resolve, reject) => {
         // 获取权限列表 默认就是超级管理员，因为没有进行接口请求 写死
-        this.roles = ['admin']
+        this.roles.push( this.userInfo.role)
         resolve(this.roles)
       })
     },
@@ -41,12 +50,21 @@ export const useUserStore = defineStore({
       })
     },
     // 退出
-    logout() {
+    async logout() {
+      let res=false;
+      await logout(this.token).then((response)=>{
+        if(response.code==0){
+          res=true
+        }
+      })
       return new Promise((resolve, reject) => {
-        this.token = null
-        this.userInfo = {}
-        this.roles = []
-        resolve(null)
+        if(res){
+          this.token = null
+          this.userInfo = {}
+          this.roles = []
+          resolve(null)
+        }
+        reject(null)
       })
     },
   },

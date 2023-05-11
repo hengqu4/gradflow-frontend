@@ -5,7 +5,7 @@
         placeholder="请输入用户名"
         autoComplete="on"
         style="position: relative"
-        v-model="ruleForm.username"
+        v-model="ruleForm.email"
         @keyup.enter.native="submitForm(ruleFormRef)"
       >
         <template #prefix>
@@ -25,10 +25,11 @@
           <el-icon class="el-input__icon"><GoodsFilled /></el-icon>
         </template>
         <template #suffix>
-          <div class="show-pwd" @click="showPwd"></div>
+          <div class="show-pwd" @click="showPwd">
             <svg-icon
               :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
             />
+          </div>
         </template>
       </el-input>
     </el-form-item>
@@ -50,6 +51,7 @@ import { ElNotification } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/modules/user';
 import { getTimeState } from '@/utils/index';
+import {login} from "@/api/user";
 const ruleFormRef = ref<FormInstance>();
 const router = useRouter();
 const UserStore = useUserStore();
@@ -57,13 +59,13 @@ const UserStore = useUserStore();
 const passwordType = ref('password');
 const loading = ref(false);
 const rules = reactive({
-  password: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-  username: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
 });
 // 表单数据
 const ruleForm = reactive({
-  username: 'admin',
-  password: '123456',
+  email: 'admin3@qq.com',
+  password: 'admin123',
 });
 
 const showPwd = () => {
@@ -80,7 +82,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
     if (valid) {
       // 登录
       setTimeout(async () => {
-        await UserStore.login(ruleForm);
+        await UserStore.userLogin(ruleForm);
         await router.push({
           path: '/',
         });
