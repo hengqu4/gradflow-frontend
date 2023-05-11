@@ -29,7 +29,6 @@
             <svg-icon
               :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
             />
-          </div>
         </template>
       </el-input>
     </el-form-item>
