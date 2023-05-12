@@ -82,8 +82,8 @@
     confirmPassword: [
       {required: true, message: '请再次输入新的密码', trigger: 'blur'},
       {validator: validateConfirmPassword, trigger: 'blur'}
-    ],
-  }
+    ]
+  })
 
 
   const submitForm = (formEl: FormInstance | undefined) => {
