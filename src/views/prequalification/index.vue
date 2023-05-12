@@ -1,25 +1,31 @@
 <template>
   <div class="app-container">
     <div class="app-container-inner">
-
-      <el-upload class="upload-demo" drag action="http://localhost:9050/prequalification/upload"
-       :on-change="handleChange" :auto-upload="true" :on-success="uploadSuccess" :show-file-list="false"
-       :on-error="uploadFail" :before-upload="beforeUpload">
-        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-        <div class="el-upload__text">
-          拖动文件到这儿或<em>点击上传</em>
-        </div>
-        <template #tip>
-          <div class="el-upload__tip">
-            docx, doc, pdf files with a size less than 10mb
+      <div v-if="role === 'student'">
+        <el-upload class="upload-demo" drag action="http://localhost:9050/prequalification/upload"
+          :on-change="handleChange" :auto-upload="true" :on-success="uploadSuccess" :show-file-list="false"
+          :on-error="uploadFail" :before-upload="beforeUpload">
+          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+          <div class="el-upload__text">
+            拖动文件到这儿或<em>点击上传</em>
           </div>
-        </template>
-      </el-upload>
+          <template #tip>
+            <div class="el-upload__tip">
+              docx, doc, pdf files with a size less than 10mb
+            </div>
+          </template>
+        </el-upload>
+      </div>
 
-      <el-table :data="tableData" style="width: 100%" border v-if="role === 'student'">
+      <el-table :data="tableData" style="width: 100%; margin-top: 20px;" border v-if="role === 'student'">
         <el-table-column prop="authorName" label="姓名" width="180">
         </el-table-column>
         <el-table-column prop="filePath" label="预审表" width="180">
+          <template #default="scope">
+            <el-link type="primary" v-if="scope.row.filePath !== null && scope.row.filePath !== ''"
+              @click="downLoad(scope.row.id, scope.row.filePath)">点击下载</el-link>
+            <span v-else>暂未上传文件</span>
+          </template>
         </el-table-column>
         <el-table-column prop="updateTime" label="修改时间" width="180">
         </el-table-column>
@@ -28,8 +34,8 @@
         <el-table-column prop="teacherStatus" label="导师审核">
           <template #default="scope">
             <el-tag type="primary" v-if="scope.row.teacherStatus == 0">未审核</el-tag>
-            <el-tag type="success" v-if="scope.row.teacherStatus == 1">审核通过</el-tag>
-            <el-tag type="warning" v-if="scope.row.teacherStatus == 2">审核不通过</el-tag>
+            <el-tag type="danger" v-if="scope.row.teacherStatus == 1">审核不通过</el-tag>
+            <el-tag type="success" v-if="scope.row.teacherStatus == 2">审核通过</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="comment" label="导师评价">
@@ -41,15 +47,23 @@
         <el-table-column prop="adminStatus" label="教务审核">
           <template #default="scope">
             <el-tag type="primary" v-if="scope.row.adminStatus == 0">未审核</el-tag>
-            <el-tag type="success" v-if="scope.row.adminStatus == 1">审核通过</el-tag>
-            <el-tag type="warning" v-if="scope.row.adminStatus == 2">审核不通过</el-tag>
+            <el-tag type="danger" v-if="scope.row.adminStatus == 1">审核不通过</el-tag>
+            <el-tag type="success" v-if="scope.row.adminStatus == 2">审核通过</el-tag>
           </template>
         </el-table-column>
       </el-table>
 
       <div style="margin-top: 20px; margin-bottom: 20px;" v-if="role !== 'student'">
-        <el-button type="primary" @click="batchApprove()">全部通过</el-button>
-        <el-button type="danger" @click="batchDisapprove()">全部不通过</el-button>
+        <el-form :inline="true" :model="dataForm" @keyup.enter.native="getTableData()">
+          <el-form-item>
+            <el-input v-model="keywords" placeholder="查询内容" clearable></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="getTableData()">查询</el-button>
+            <el-button type="primary" @click="batchApprove()" :disabled="dataSelections.length <= 0">全部通过</el-button>
+            <el-button type="danger" @click="batchDisapprove()" :disabled="dataSelections.length <= 0">全部不通过</el-button>
+          </el-form-item>
+        </el-form>
       </div>
 
       <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
@@ -59,6 +73,11 @@
         <el-table-column prop="authorName" label="姓名" width="100">
         </el-table-column>
         <el-table-column prop="filePath" label="预审表" width="100">
+          <template #default="scope">
+            <el-link type="primary" v-if="scope.row.filePath !== null && scope.row.filePath !== ''"
+              @click="downLoad(scope.row.id, scope.row.filePath)">点击下载</el-link>
+            <span v-else>暂未上传文件</span>
+          </template>
         </el-table-column>
         <el-table-column prop="updateTime" label="修改时间" width="100">
         </el-table-column>
@@ -67,21 +86,23 @@
         <el-table-column prop="teacherStatus" label="导师审核">
           <template #default="scope">
             <el-tag type="primary" v-if="scope.row.teacherStatus == 0">未审核</el-tag>
-            <el-tag type="success" v-if="scope.row.teacherStatus == 1">审核通过</el-tag>
-            <el-tag type="warning" v-if="scope.row.teacherStatus == 2">审核不通过</el-tag>
+            <el-tag type="danger" v-if="scope.row.teacherStatus == 1">审核不通过</el-tag>
+            <el-tag type="success" v-if="scope.row.teacherStatus == 2">审核通过</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="comment" label="导师评价">
           <template #default="scope">
-            <a title="点击可编辑" @click="openEdit(scope.row)" class="comment-text">
-              {{ (scope.row.comment === null || scope.row.comment === '') ? '无' : scope.row.comment }}</a>
+            <a title="点击可编辑" @click="openEdit(scope.row)" class="comment-text"  v-if="role==='teacher'">
+              {{ (scope.row.comment === null || scope.row.comment === '') ? '无' : scope.row.comment }}
+            </a>
+            <span v-if="admin">{{ (scope.row.comment === null || scope.row.comment === '') ? '无' : scope.row.comment }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="adminStatus" label="教务审核">
           <template #default="scope">
             <el-tag type="primary" v-if="scope.row.adminStatus == 0">未审核</el-tag>
-            <el-tag type="success" v-if="scope.row.adminStatus == 1">审核通过</el-tag>
-            <el-tag type="warning" v-if="scope.row.adminStatus == 2">审核不通过</el-tag>
+            <el-tag type="danger" v-if="scope.row.adminStatus == 1">审核不通过</el-tag>
+            <el-tag type="success" v-if="scope.row.adminStatus == 2">审核通过</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -91,6 +112,12 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <div v-if="role !== 'student'" style="margin-top: 20px;">
+        <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex"
+          :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" hide-on-single-page
+          layout="total, sizes, prev, pager, next, jumper" style="justify-content: center;"></el-pagination>
+      </div>
 
       <el-dialog title="编辑评价" v-model="dialogVisible" width="30%" v-if="role !== 'student'">
         <el-input v-model="comment.text" :rows="5" type="textarea" placeholder="请输出评价..." />
@@ -121,6 +148,10 @@ export default {
         comment: '垃圾',
         adminStatus: 0
       }],
+      keywords: '',
+      pageIndex: 1,
+      pageSize: 10,
+      totalPage: 100,
       role: 'student',
       dataSelections: [],
       dialogVisible: false,
@@ -132,19 +163,36 @@ export default {
   },
   created() {
     this.role = UserStore.getCurrentRoles[0]
-    this.role = 'student'
+    this.role = 'teacher'
     console.log(this.role)
     this.getTableData()
   },
   methods: {
     getTableData() {
-      this.$request.get('http://localhost:9050/prequalification/list').then(({ data }) => {
-        if (data && data.code === 0) {
-          this.tableData = data.data
-        } else {
-          this.tableData = []
-        }
-      })
+      this.$request.get('http://localhost:9050/prequalification/list',
+        {
+          params: {
+            page: this.pageIndex,
+            limit: this.pageSize,
+            key: this.keywords
+          }
+        }).then(({ data }) => {
+          if (data && data.code === 0) {
+            this.tableData = data.data.records
+            this.totalPage = data.data.total
+          } else {
+            this.tableData = []
+          }
+        })
+    },
+    sizeChangeHandle(val) {
+      this.pageSize = val
+      this.pageIndex = 1
+      this.getTableData()
+    },
+    currentChangeHandle(val) {
+      this.pageIndex = val
+      this.getTableData()
     },
     handleSelectionChange(val) {
       this.dataSelections = val
@@ -249,10 +297,10 @@ export default {
         }
       })
     },
-    handleChange(uploadFile, uploadFiles){
-      // console.log(uploadFiles)
+    handleChange(uploadFile, uploadFiles) {
+
     },
-    uploadSuccess(uploadFile, uploadFiles){
+    uploadSuccess(uploadFile, uploadFiles) {
       console.log(uploadFile)
       this.$message({
         message: "文件上传成功",
@@ -261,22 +309,57 @@ export default {
         onClose: () => {
           this.getTableData()
         }
-      });
+      })
     },
-    uploadFail(uploadFile, uploadFiles){
+    uploadFail(uploadFile, uploadFiles) {
       this.$message.error(uploadFile.msg)
     },
-    beforeUpload(uploadRawFile){
-      var testmsg = file.name.substring(file.name.lastIndexOf(".") + 1)
-      const extension = testmsg === "doc"|| testmsg === "docx" || testmsg === "pdf"
-      if(!extension){
-        this.$message.error('文件类型不支持')
+    beforeUpload(uploadRawFile) {
+      var testmsg = uploadRawFile.name.substring(uploadRawFile.name.lastIndexOf(".") + 1)
+      const extension = (testmsg === "doc" || testmsg === "docx" || testmsg === "pdf")
+      if (!extension) {
+        this.$message({
+          message: "文件类型不支持",
+          type: "error",
+        })
         return false
-      }else if(uploadRawFile.size/1024/1024>2){
-        this.$message.error('文件太大')
+      } else if (uploadRawFile.size / 1024 / 1024 > 10) {
+        this.$message({
+          message: "文件太大",
+          type: "error",
+        })
         return false
       }
       return true
+    },
+    downLoad(id, fileName) {
+      this.$request.get(`http://localhost:9050/prequalification/download/${id}/${fileName}`,
+        {
+          responseType: 'blob'
+        }).then(({ data }) => {
+          const content = data;
+          const blob = new Blob([content]);
+          if ('download' in document.createElement('a')) {
+            //非IE下载
+            const a = document.createElement('a');
+            a.download = fileName;
+            a.style.display = 'none';
+            a.href = window.URL.createObjectURL(blob);
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(a.href);
+            document.body.removeChild(a);
+          } else {
+            //IE10+下载
+            if (typeof window.navigator.msSaveBlob !== 'undefined') {
+              window.navigator.msSaveBlob(blob, _this.selected);
+            } else {
+              let URL = window.URL || window.webkitURL;
+              let downloadUrl = URL.createObjectURL(blob);
+              window.location = downloadUrl;
+            }
+          }
+        })
     }
   }
 }
@@ -294,7 +377,6 @@ export default {
   color: blueviolet;
   cursor: pointer;
 }
-
 .dialog-button {
   text-align: center;
   margin-top: 20px;
