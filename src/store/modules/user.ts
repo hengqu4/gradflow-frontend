@@ -12,7 +12,11 @@ export const useUserStore = defineStore({
     // 角色
     roles: [],
   }),
-  getters: {},
+  getters: {
+    getCurrentRoles(state){
+      return state.roles
+    }
+  },
   // 可以同步 也可以异步
   actions: {
     // 登录

@@ -61,6 +61,12 @@ export const constantRoutes: Array<RouteRecordRaw & extendRoute> = [
         name: 'home',
         meta: { title: '首页', icon: 'House', affix: true, role: ['other'] },
       },
+      {
+        path: '/prequalification',
+        component: () => import('@/views/prequalification/index.vue'),
+        name: 'prequalification',
+        meta: { title: '预审', icon: 'Prequalification', affix: true, role: ['other'] },
+      },
     ],
   },
 ]
