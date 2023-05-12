@@ -9,6 +9,9 @@ const service = axios.create({
   timeout: 3000000, // request timeout，
   // 跨域时候允许携带凭证
   withCredentials: true,
+  headers: {
+    'Content-Type': "application/json; charset=utf-8"
+  }
 })
 
 //  request interceptor 接口请求拦截

@@ -15,7 +15,11 @@ import 'element-plus/dist/index.css'
 import '@/assets/iconfont/iconfont.css'
 import '@/assets/iconfont/iconfont.js'
 
+import request from '@/api/request'
+
 const app = createApp(App)
+
+app.config.globalProperties.$request =request
 
 app.component('svg-icon', SvgIcon)
 
