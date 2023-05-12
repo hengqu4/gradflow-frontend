@@ -1,8 +1,8 @@
 <template>
   <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="0">
-    <el-form-item label="" prop="username">
+    <el-form-item label="" prop="email">
       <el-input
-        placeholder="请输入用户名"
+        placeholder="请输入邮箱"
         autoComplete="on"
         style="position: relative"
         v-model="ruleForm.email"
@@ -46,7 +46,7 @@
 </template>
 <script lang="ts" setup>
 import { ref, reactive } from 'vue';
-import type { FormInstance } from 'element-plus';
+import type { FormInstance,FormRules } from 'element-plus';
 import { ElNotification } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/modules/user';
@@ -58,9 +58,9 @@ const UserStore = useUserStore();
 
 const passwordType = ref('password');
 const loading = ref(false);
-const rules = reactive({
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+const rules = reactive<FormRules>({
   email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 });
 // 表单数据
 const ruleForm = reactive({
@@ -82,21 +82,34 @@ const submitForm = (formEl: FormInstance | undefined) => {
     if (valid) {
       // 登录
       setTimeout(async () => {
-        await UserStore.userLogin(ruleForm);
-        await router.push({
-          path: '/',
-        });
-        ElNotification({
-          title: getTimeState(),
-          message: '欢迎登录 ECNU毕业设计系统',
-          type: 'success',
-          duration: 3000,
-        });
-        loading.value = true;
+        await UserStore.userLogin(ruleForm)
+            .then(async ()=>{
+              await router.push({
+                path: '/',
+              });
+              ElNotification({
+                title: getTimeState(),
+                message: '欢迎登录 ECNU毕业设计系统',
+                type: 'success',
+                duration: 3000,
+              });
+            })
+          .catch(()=>{
+            ElNotification({
+              title: getTimeState(),
+              message: '登录失败',
+              type: 'error',
+              duration: 3000,
+            });
+          }).finally(()=>{
+              loading.value = false;
+            })
       }, 1000);
     } else {
       console.log('error submit!');
-      return false;
+      setTimeout(async () => {
+        loading.value = false;
+      }, 1000);
     }
   });
 };
