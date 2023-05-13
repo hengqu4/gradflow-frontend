@@ -37,6 +37,12 @@ $dark_gray: #889aa4;
       width: 60px;
     }
   }
+  .login-or-register{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
   ::v-deep(.el-input__inner) {
     height: 40px;
   }

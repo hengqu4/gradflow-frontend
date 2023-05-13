@@ -51,6 +51,11 @@ type resetPassRes= {
   code:number
 }
 
+type registerRes= {
+    msg:string,
+    code:number
+}
+
 type userUpdateRes={
      msg:string,
      code:number;
@@ -109,6 +114,14 @@ export async function userInfoUpdate(data,token) {
             }
         }).then((res)=>{
         const data: userUpdateRes = res.data;
+        return data
+    })
+}
+
+export async function register(data) {
+    return request.post<registerRes>('/user/user/signUp',data)
+        .then((res)=>{
+        const data: registerRes = res.data;
         return data
     })
 }
