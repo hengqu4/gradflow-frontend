@@ -168,10 +168,11 @@
                 duration: 3000,
               });
             }
-          }).catch(()=>{
+          }).catch((res)=>{
+            let errorMsg=res.response.data
             ElNotification({
               title: getTimeState(),
-              message: '注册失败',
+              message: errorMsg,
               type: 'error',
               duration: 3000,
             });
