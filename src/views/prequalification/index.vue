@@ -17,7 +17,8 @@
         </el-upload>
       </div>
 
-      <el-table :data="tableData" style="width: 100%; margin-top: 20px;" border v-if="role === 'student'">
+      <el-table :data="tableData" style="width: 100%; margin-top: 20px;" border v-if="role === 'student'"
+        v-loading="loading">
         <el-table-column prop="authorName" label="姓名" width="180">
         </el-table-column>
         <el-table-column prop="filePath" label="预审表" width="180">
@@ -92,10 +93,11 @@
         </el-table-column>
         <el-table-column prop="comment" label="导师评价">
           <template #default="scope">
-            <a title="点击可编辑" @click="openEdit(scope.row)" class="comment-text"  v-if="role==='teacher'">
+            <a title="点击可编辑" @click="openEdit(scope.row)" class="comment-text" v-if="role === 'teacher'">
               {{ (scope.row.comment === null || scope.row.comment === '') ? '无' : scope.row.comment }}
             </a>
-            <span v-if="admin">{{ (scope.row.comment === null || scope.row.comment === '') ? '无' : scope.row.comment }}</span>
+            <span v-if="admin">{{ (scope.row.comment === null || scope.row.comment === '') ? '无' : scope.row.comment
+            }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="adminStatus" label="教务审核">
@@ -379,6 +381,7 @@ export default {
   color: blueviolet;
   cursor: pointer;
 }
+
 .dialog-button {
   text-align: center;
   margin-top: 20px;
