@@ -162,9 +162,8 @@ export default {
     }
   },
   created() {
-    this.role = UserStore.getCurrentRoles[0]
+    this.role = UserStore.roles[0]
     this.role = 'teacher'
-    console.log(this.role)
     this.getTableData()
   },
   methods: {
