@@ -1,7 +1,4 @@
 import request from './request';
-import {AxiosResponse} from "axios";
-import * as url from "url";
-import {createBScroll} from "@better-scroll/core";
 import qs from 'qs';
 
 
@@ -54,6 +51,20 @@ type resetPassRes= {
   code:number
 }
 
+type userUpdateRes={
+     msg:string,
+     code:number;
+     data: {
+         email:string;
+         avatar:string;
+         sex:number;
+         signature:string;
+         role:string;
+         address:string;
+         phone:string;
+     }
+}
+
 export async function login(data) {
    return request.post<CurrentUser>('/user/user/login',data)
       .then((res)=>{
@@ -88,4 +99,16 @@ export async function resetPassword(email,password,token) {
         const data: resetPassRes = res.data;
         return data
       })
+}
+
+export async function userInfoUpdate(data,token) {
+    return request.post<userUpdateRes>('/user/user/updateUser',data,
+        {
+            headers: {
+                'token': token,
+            }
+        }).then((res)=>{
+        const data: userUpdateRes = res.data;
+        return data
+    })
 }
