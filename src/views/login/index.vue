@@ -16,7 +16,7 @@
           </el-radio-group>
         </div>
         <LoginForm v-if="loginOrRegister=='Login'"/>
-        <RegisterForm  v-if="loginOrRegister=='Register'"/>
+        <RegisterForm  v-if="loginOrRegister=='Register'" v-on:registerSuccess="registerSuccess"/>
       </div>
     </div>
   </div>
@@ -28,6 +28,10 @@
   import {ref} from "vue";
 
   const loginOrRegister = ref('Login')
+
+  const registerSuccess=()=>{
+    loginOrRegister.value='Login'
+  }
 </script>
 <style lang="scss" scoped>
 @import './index';

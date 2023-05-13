@@ -78,12 +78,17 @@
 
 <script lang="ts" setup>
 
-  import {reactive, ref} from "vue";
-  import {FormInstance} from "element-plus";
+  import {reactive, ref,defineEmits} from "vue";
+  import {ElMessage, ElNotification, FormInstance} from "element-plus";
   const ruleFormRef = ref<FormInstance>();
+  import {register} from "@/api/user";
+  import {getTimeState} from "@/utils";
 
   const passwordType = ref('password');
   const loading = ref(false);
+
+  const emits = defineEmits(['registerSuccess'])
+
 
   const showPwd = () => {
     if (passwordType.value === 'password') {
@@ -143,6 +148,48 @@
     confirmPassword:''
   });
 
+  const submitForm = (formEl: FormInstance | undefined) => {
+    loading.value = true;
+    if (!formEl) return;
+    formEl.validate((valid)=>{
+      if (valid){
+        // 提交注册数据
+        const { confirmPassword, ...rest } = ruleForm;
+        const formToSubmit= {...rest}
+        register(formToSubmit)
+          .then((res)=>{
+            if (res.code==0) {
+              // 通知父组件 显示登录表单
+              emits('registerSuccess');
+              ElNotification({
+                title: getTimeState(),
+                message: '注册成功',
+                type: 'success',
+                duration: 3000,
+              });
+            }
+          }).catch(()=>{
+            ElNotification({
+              title: getTimeState(),
+              message: '注册失败',
+              type: 'error',
+              duration: 3000,
+            });
+        }).finally(()=>{
+          loading.value = false;
+        })
+      }else {
+        ElMessage({
+          showClose: true,
+          message: '请完善正确的格式.',
+          type: 'warning',
+        })
+        setTimeout(async () => {
+          loading.value = false;
+        }, 1000);
+      }
+    })
+  }
 </script>
 
 <style scoped>
