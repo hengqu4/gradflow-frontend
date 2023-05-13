@@ -117,7 +117,7 @@
           <el-input v-model="userInfo.signature" />
         </el-form-item>
 
-        <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
+        <el-button type="primary" @click="submitForm(ruleFormRef)" :disabled="isSame">提交</el-button>
       </el-form>
     </div>
   </div>
@@ -143,6 +143,13 @@
 
   const editButtonText = computed(() => {
     return formIfShow.value == false ? '编辑' : '取消编辑'
+  })
+
+  const isSame=computed(()=>{
+    for (let key in userInfo){
+      if (userInfo[key]!=UserStore.userInfo[key]) return false
+    }
+    return true
   })
 
   const userInfo = reactive({
