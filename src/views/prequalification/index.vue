@@ -67,7 +67,7 @@
       </div>
 
       <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
-        @selection-change="handleSelectionChange" v-if="role !== 'student'">
+        @selection-change="handleSelectionChange" v-if="role !== 'student'" v-loading="loading">
         <el-table-column type="selection" width="55">
         </el-table-column>
         <el-table-column prop="authorName" label="姓名" width="100">
@@ -155,6 +155,7 @@ export default {
       role: 'student',
       dataSelections: [],
       dialogVisible: false,
+      loading: true,
       comment: {
         id: 0,
         text: ''
@@ -168,6 +169,7 @@ export default {
   },
   methods: {
     getTableData() {
+      this.loading = true
       this.$request.get('http://localhost:9050/prequalification/list',
         {
           params: {
@@ -176,6 +178,7 @@ export default {
             key: this.keywords
           }
         }).then(({ data }) => {
+          this.loading = false
           if (data && data.code === 0) {
             this.tableData = data.data.records
             this.totalPage = data.data.total
