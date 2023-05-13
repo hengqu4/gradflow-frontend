@@ -9,14 +9,25 @@
           <img class="icon" src="@/assets/logo.png" alt="logo" />
           <h2 class="title">ECNU毕业设计</h2>
         </div>
-        <LoginForm />
+        <div>
+          <el-radio-group v-model="loginOrRegister" size="large" class="login-or-register">
+            <el-radio-button label="Register" />
+            <el-radio-button label="Login" />
+          </el-radio-group>
+        </div>
+        <LoginForm v-if="loginOrRegister=='Login'"/>
+        <RegisterForm  v-if="loginOrRegister=='Register'"/>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import LoginForm from './components/LoginForm.vue';
+  import LoginForm from './components/LoginForm.vue';
+  import RegisterForm from './components/RegisterForm.vue'
+  import {ref} from "vue";
+
+  const loginOrRegister = ref('Login')
 </script>
 <style lang="scss" scoped>
 @import './index';
