@@ -67,6 +67,18 @@ export const constantRoutes: Array<RouteRecordRaw & extendRoute> = [
         name: 'prequalification',
         meta: { title: '预审', icon: 'DocumentChecked', affix: true, role: ['other'] },
       },
+      {
+        path: '/defense',
+        component: () => import('@/views/defense/index.vue'),
+        name: 'defense',
+        meta: { title: '答辩', icon: 'CircleCheck', affix: true, role: ['other'] },
+      },
+      {
+        path: '/degree',
+        component: () => import('@/views/degree/index.vue'),
+        name: 'degree',
+        meta: { title: '学位', icon: 'Discount', affix: true, role: ['other'] },
+      }
     ],
   },
 ]
