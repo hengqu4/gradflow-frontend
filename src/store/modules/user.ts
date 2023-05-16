@@ -22,17 +22,9 @@ export const useUserStore = defineStore({
     async userLogin(userInfo) {
       const { email, password } = userInfo
       let currentUser=await login(userInfo);
-      this.token = currentUser.token
+      // this.token = currentUser.token
       this.userInfo = currentUser.data
       await this.getRoles()
-      // return new Promise(async (resolve, reject) => {
-      //   let currentUser=await login(userInfo);
-      //   console.log(currentUser)
-      //   // this.token = email
-      //   // this.userInfo = userInfo
-      //   // await this.getRoles()
-      //   resolve(email)
-      // })
     },
     // 获取用户授权角色信息，实际应用中 可以通过token通过请求接口在这里获取用户信息
     getRoles() {
@@ -54,11 +46,13 @@ export const useUserStore = defineStore({
       let res=false;
       await logout(this.token).then((response)=>{
         if(response.code==0){
+          console.log("进入这里")
           res=true
         }
       })
       return new Promise((resolve, reject) => {
         if(res){
+          console.log("进入Promise")
           this.token = null
           this.userInfo = {}
           this.roles = []
