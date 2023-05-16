@@ -4,14 +4,14 @@ import {
   RouteRecordRaw,
   createWebHashHistory,
   Router,
-} from 'vue-router'
-import Layout from '@/layout/index.vue'
+} from 'vue-router';
+import Layout from '@/layout/index.vue';
 // 扩展继承属性
 interface extendRoute {
-  hidden?: boolean
+  hidden?: boolean;
 }
 //
-import errorRouter from './modules/error'
+import errorRouter from './modules/error';
 // import tableRouter from './modules/table'
 // import formRouter from './modules/from'
 
@@ -24,7 +24,7 @@ export const asyncRoutes = [
     path: '/:pathMatch(.*)',
     redirect: '/404',
   },
-]
+];
 
 /**
  * path ==> 路由路径
@@ -49,44 +49,135 @@ export const constantRoutes: Array<RouteRecordRaw & extendRoute> = [
     hidden: true,
     meta: { title: '登录' },
   },
+
   {
     path: '/',
-    name: 'layout',
     component: Layout,
+    name: 'home',
     redirect: '/home',
     children: [
       {
         path: '/home',
         component: () => import('@/views/home/index.vue'),
-        name: 'home',
-        meta: { title: '首页', icon: 'House', affix: true, role: ['other'] },
+        meta: {
+          title: '首页',
+          keepAlive: true,
+          icon: 'House',
+          role: ['other'],
+        },
       },
+    ],
+  },
+
+  {
+    path: '/prequalification',
+    component: Layout,
+    name: 'prequalification',
+    redirect: '/prequalification',
+    children: [
       {
         path: '/prequalification',
         component: () => import('@/views/prequalification/index.vue'),
         name: 'prequalification',
-        meta: { title: '预审', icon: 'DocumentChecked', affix: true, role: ['other'] },
+        meta: {
+          title: '学生预审表',
+          icon: 'DocumentChecked',
+          affix: true,
+          role: ['other'],
+        },
       },
+    ],
+  },
+
+  {
+    path: '/review',
+    component: Layout,
+    name: 'review',
+    redirect: '/review',
+    children: [
+      {
+        path: '/review',
+        component: () => import('@/views/review/index.vue'),
+        name: 'review',
+        meta: {
+          title: '论文初审',
+          icon: 'DocumentChecked',
+          affix: true,
+          role: ['other'],
+        },
+      },
+    ],
+  },
+  {
+    path: '/defense',
+    component: Layout,
+    name: 'defense',
+    redirect: '/defense',
+    children: [
       {
         path: '/defense',
         component: () => import('@/views/defense/index.vue'),
         name: 'defense',
-        meta: { title: '答辩', icon: 'CircleCheck', affix: true, role: ['other'] },
+        meta: {
+          title: '毕业答辩',
+          icon: 'CircleCheck',
+          affix: true,
+          role: ['other'],
+        },
       },
+    ],
+  },
+  {
+    path: '/degree',
+    component: Layout,
+    name: 'degree',
+    redirect: '/degree',
+    children: [
       {
         path: '/degree',
         component: () => import('@/views/degree/index.vue'),
         name: 'degree',
-        meta: { title: '学位', icon: 'Discount', affix: true, role: ['other'] },
-      }
+        meta: {
+          title: '学位申请',
+          icon: 'Discount',
+          affix: true,
+          role: ['other'],
+        },
+      },
     ],
   },
-]
+  {
+    path: '/403',
+    name: '403',
+    component: () => import('@/views/error/403.vue'),
+    hidden: true,
+    meta: {
+      requiresAuth: true,
+      title: '403页面',
+      key: '403',
+    },
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: () => import('@/views/error/404.vue'),
+    hidden: true,
+    meta: {
+      requiresAuth: true,
+      title: '404页面',
+      key: '404',
+    },
+  },
+  {
+    path: '/:pathMatch(.*)',
+    redirect: '/404',
+  },
+];
 
 const router = createRouter({
   // history: createWebHistory(process.env.BASE_URL), // history
   history: createWebHashHistory('/'), // hash
   routes: constantRoutes,
-})
+});
 
-export default router
+export default router;

@@ -26,13 +26,13 @@
       <el-table
         :data="tableData"
         style="width: 100%; margin-top: 20px"
-        :border="true"
+        border
         v-if="role === 'student'"
         v-loading="loading"
       >
         <el-table-column prop="authorName" label="姓名" width="180">
         </el-table-column>
-        <el-table-column prop="filePath" label="预审表" width="180">
+        <el-table-column prop="filePath" label="论文" width="180">
           <template #default="scope">
             <el-link
               type="primary"
@@ -168,6 +168,7 @@
             }}</span>
           </template>
         </el-table-column>
+
         <el-table-column prop="adminStatus" label="教务审核">
           <template #default="scope">
             <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
@@ -179,6 +180,7 @@
             >
           </template>
         </el-table-column>
+
         <el-table-column label="操作">
           <template #default="scope">
             <el-button
@@ -238,7 +240,6 @@ import {
   apiPrequalApprove,
   apiPrequalDisapprove,
   apiPrequalComment,
-  apiPrequalDownload,
 } from '@/api/prequalification';
 
 const UserStore = useUserStore();
@@ -273,7 +274,7 @@ export default {
   },
   created() {
     this.role = UserStore.roles[0];
-    this.role = 'teacher';
+    this.role = 'student';
     this.getTableData();
   },
   methods: {
@@ -283,15 +284,32 @@ export default {
         page: this.pageIndex,
         limit: this.pageSize,
         key: this.keywords,
-      }).then((data) => {
+      }).then((res) => {
         this.loading = false;
-        if (data && data.code === 0) {
-          this.tableData = data.data.records;
-          this.totalPage = data.data.total;
-        } else {
-          this.tableData = [];
-        }
+        // if (data && data.code === 0) {
+        //   this.tableData = data.data.records;
+        //   this.totalPage = data.data.total;
+        // } else {
+        //   this.tableData = [];
+        // }
       });
+      // this.$request
+      //   .get('http://localhost:9050/prequalification/list', {
+      //     params: {
+      //       page: this.pageIndex,
+      //       limit: this.pageSize,
+      //       key: this.keywords,
+      //     },
+      //   })
+      //   .then(({ data }) => {
+      //     this.loading = false;
+      //     if (data && data.code === 0) {
+      //       this.tableData = data.data.records;
+      //       this.totalPage = data.data.total;
+      //     } else {
+      //       this.tableData = [];
+      //     }
+      //   });
     },
     sizeChangeHandle(val) {
       this.pageSize = val;
@@ -315,15 +333,12 @@ export default {
         this.disapprove(0);
       }
     },
-
     handleApprove(index, row) {
       this.approve(row.id);
     },
-
     handleDisapprove(index, row) {
       this.disapprove(row.id);
     },
-
     approve(id) {
       var ids = id
         ? [id]
@@ -339,20 +354,22 @@ export default {
           type: 'warning',
         }
       ).then(() => {
-        apiPrequalApprove(ids).then((data) => {
-          if (data && data.code === 0) {
-            this.$message({
-              message: '操作成功',
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.getTableData();
-              },
-            });
-          } else {
-            this.$message.error(data.msg);
-          }
-        });
+        this.$request
+          .post('http://localhost:9050/prequalification/approve', ids)
+          .then(({ data }) => {
+            if (data && data.code === 0) {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.getTableData();
+                },
+              });
+            } else {
+              this.$message.error(data.msg);
+            }
+          });
       });
     },
     disapprove(id) {
@@ -370,13 +387,43 @@ export default {
           type: 'warning',
         }
       ).then(() => {
-        apiPrequalDisapprove(ids).then((data) => {
+        this.$request
+          .post('http://localhost:9050/prequalification/disapprove', ids)
+          .then(({ data }) => {
+            if (data && data.code === 0) {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.getTableData();
+                },
+              });
+            } else {
+              this.$message.error(data.msg);
+            }
+          });
+      });
+    },
+    openEdit(row) {
+      this.dialogVisible = true;
+      this.comment.id = row.id;
+      this.comment.text = row.comment;
+    },
+    submitComment() {
+      this.$request
+        .post(
+          `http://localhost:9050/prequalification/comment/${this.comment.id}`,
+          this.comment.text
+        )
+        .then(({ data }) => {
           if (data && data.code === 0) {
             this.$message({
               message: '操作成功',
               type: 'success',
               duration: 1500,
               onClose: () => {
+                this.dialogVisible = false;
                 this.getTableData();
               },
             });
@@ -384,35 +431,8 @@ export default {
             this.$message.error(data.msg);
           }
         });
-      });
     },
-
-    openEdit(row) {
-      this.dialogVisible = true;
-      this.comment.id = row.id;
-      this.comment.text = row.comment;
-    },
-
-    submitComment() {
-      apiPrequalComment(this.comment.id, this.comment.text).then((data) => {
-        if (data && data.code === 0) {
-          this.$message({
-            message: '操作成功',
-            type: 'success',
-            duration: 1500,
-            onClose: () => {
-              this.dialogVisible = false;
-              this.getTableData();
-            },
-          });
-        } else {
-          this.$message.error(data.msg);
-        }
-      });
-    },
-
     handleChange(uploadFile, uploadFiles) {},
-
     uploadSuccess(uploadFile, uploadFiles) {
       console.log(uploadFile);
       this.$message({
@@ -424,11 +444,9 @@ export default {
         },
       });
     },
-
     uploadFail(uploadFile, uploadFiles) {
       this.$message.error(uploadFile.msg);
     },
-
     beforeUpload(uploadRawFile) {
       var testmsg = uploadRawFile.name.substring(
         uploadRawFile.name.lastIndexOf('.') + 1
@@ -450,32 +468,38 @@ export default {
       }
       return true;
     },
-
     downLoad(id, fileName) {
-      apiPrequalDownload(id, fileName).then((data) => {
-        const content = data;
-        const blob = new Blob([content]);
-        if ('download' in document.createElement('a')) {
-          //非IE下载
-          const a = document.createElement('a');
-          a.download = fileName;
-          a.style.display = 'none';
-          a.href = window.URL.createObjectURL(blob);
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(a.href);
-          document.body.removeChild(a);
-        } else {
-          //IE10+下载
-          if (typeof window.navigator.msSaveBlob !== 'undefined') {
-            window.navigator.msSaveBlob(blob, _this.selected);
-          } else {
-            let URL = window.URL || window.webkitURL;
-            let downloadUrl = URL.createObjectURL(blob);
-            window.location = downloadUrl;
+      this.$request
+        .get(
+          `http://localhost:9050/prequalification/download/${id}/${fileName}`,
+          {
+            responseType: 'blob',
           }
-        }
-      });
+        )
+        .then(({ data }) => {
+          const content = data;
+          const blob = new Blob([content]);
+          if ('download' in document.createElement('a')) {
+            //非IE下载
+            const a = document.createElement('a');
+            a.download = fileName;
+            a.style.display = 'none';
+            a.href = window.URL.createObjectURL(blob);
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(a.href);
+            document.body.removeChild(a);
+          } else {
+            //IE10+下载
+            if (typeof window.navigator.msSaveBlob !== 'undefined') {
+              window.navigator.msSaveBlob(blob, _this.selected);
+            } else {
+              let URL = window.URL || window.webkitURL;
+              let downloadUrl = URL.createObjectURL(blob);
+              window.location = downloadUrl;
+            }
+          }
+        });
     },
   },
 };

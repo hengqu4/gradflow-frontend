@@ -51,9 +51,7 @@
         <el-table-column prop="teacherName" label="导师"> </el-table-column>
         <el-table-column prop="teacherStatus" label="导师审核">
           <template #default="scope">
-            <el-tag type="primary" v-if="scope.row.teacherStatus == 0"
-              >未审核</el-tag
-            >
+            <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
             <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
               >审核不通过</el-tag
             >
@@ -66,8 +64,8 @@
           <template #default="scope">
             <div>
               {{
-                scope.row.comment === null || scope.row.comment === ""
-                  ? "无"
+                scope.row.comment === null || scope.row.comment === ''
+                  ? '无'
                   : scope.row.comment
               }}
             </div>
@@ -75,9 +73,7 @@
         </el-table-column>
         <el-table-column prop="adminStatus" label="教务审核">
           <template #default="scope">
-            <el-tag type="primary" v-if="scope.row.adminStatus == 0"
-              >未审核</el-tag
-            >
+            <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
             <el-tag type="danger" v-if="scope.row.adminStatus == 1"
               >审核不通过</el-tag
             >
@@ -93,11 +89,7 @@
         style="margin-top: 20px; margin-bottom: 20px"
         v-if="role !== 'student'"
       >
-        <el-form
-          :inline="true"
-          :model="dataForm"
-          @keyup.enter.native="getTableData()"
-        >
+        <el-form :inline="true" @keyup.enter.native="getTableData()">
           <el-form-item>
             <el-input
               v-model="keywords"
@@ -115,7 +107,6 @@
 
       <!-- 老师端操作 -->
       <el-table
-        ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%"
@@ -145,12 +136,11 @@
         </el-table-column>
         <el-table-column prop="updateTime" label="修改时间" width="200">
         </el-table-column>
-        <el-table-column prop="teacherName" label="导师" width="100"> </el-table-column>
+        <el-table-column prop="teacherName" label="导师" width="100">
+        </el-table-column>
         <el-table-column prop="teacherStatus" label="导师审核" width="200">
           <template #default="scope">
-            <el-tag type="primary" v-if="scope.row.teacherStatus == 0"
-              >未审核</el-tag
-            >
+            <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
             <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
               >审核不通过</el-tag
             >
@@ -168,23 +158,21 @@
               v-if="role === 'teacher'"
             >
               {{
-                scope.row.comment === null || scope.row.comment === ""
-                  ? "无"
+                scope.row.comment === null || scope.row.comment === ''
+                  ? '无'
                   : scope.row.comment
               }}
             </a>
-            <span v-if="admin">{{
-              scope.row.comment === null || scope.row.comment === ""
-                ? "无"
+            <span v-if="role == 'admin'">{{
+              scope.row.comment === null || scope.row.comment === ''
+                ? '无'
                 : scope.row.comment
             }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="adminStatus" label="教务审核" width="200">
           <template #default="scope">
-            <el-tag type="primary" v-if="scope.row.adminStatus == 0"
-              >未审核</el-tag
-            >
+            <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
             <el-tag type="danger" v-if="scope.row.adminStatus == 1"
               >审核不通过</el-tag
             >
@@ -248,8 +236,8 @@
   </div>
 </template>
 <script>
-import { useUserStore } from "@/store/modules/user";
-import { UploadFilled } from "@element-plus/icons-vue";
+import { useUserStore } from '@/store/modules/user';
+import { UploadFilled } from '@element-plus/icons-vue';
 
 const UserStore = useUserStore();
 
@@ -258,35 +246,35 @@ export default {
     return {
       tableData: [
         {
-          authorName: "王小虎",
-          filePath: "ssss",
-          updateTime: "2016-05-02",
-          teacherName: "qjk",
+          authorName: '王小虎',
+          filePath: 'ssss',
+          updateTime: '2016-05-02',
+          teacherName: 'qjk',
           teacherStatus: 0,
-          comment: "垃圾",
+          comment: '垃圾',
           adminStatus: 0,
         },
       ],
-      keywords: "",
+      keywords: '',
       pageIndex: 1,
       pageSize: 10,
       totalPage: 100,
-      role: "student",
+      role: 'student',
       dataSelections: [],
       dialogVisible: false,
       loading: true,
       action: false,
-      token: "",
+      token: '',
       comment: {
         id: 0,
-        text: "",
+        text: '',
       },
     };
   },
   created() {
     this.role = UserStore.roles[0];
     // todo：这里需要修改，改为本地获取
-    const userStateStr = window.localStorage.getItem("userState");
+    const userStateStr = window.localStorage.getItem('userState');
     const userStateObj = JSON.parse(userStateStr);
     this.token = userStateObj.token;
     this.role = userStateObj.roles[0];
@@ -298,7 +286,7 @@ export default {
     getTableData() {
       this.loading = true;
       this.$request
-        .get("http://localhost:9100/defense/defform/list", {
+        .get('http://localhost:9100/defense/defform/list', {
           params: {
             page: this.pageIndex,
             limit: this.pageSize,
@@ -346,19 +334,19 @@ export default {
     },
     approve(id) {
       // console.log(id)
-      this.$confirm(`确定让这篇论文审核通过吗? 注意该过程不可逆`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm(`确定让这篇论文审核通过吗? 注意该过程不可逆`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       }).then(() => {
         this.$request
-          .post("http://localhost:9100/defense/defform/approve?id=" + id)
+          .post('http://localhost:9100/defense/defform/approve?id=' + id)
           .then(({ data }) => {
             this.action = true;
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
-                type: "success",
+                message: '操作成功',
+                type: 'success',
                 duration: 1500,
                 onClose: () => {
                   this.getTableData();
@@ -371,19 +359,19 @@ export default {
       });
     },
     disapprove(id) {
-      this.$confirm(`确定让这篇论文审核通过吗? 注意该过程不可逆`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm(`确定让这篇论文审核通过吗? 注意该过程不可逆`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       }).then(() => {
         this.$request
-          .post("http://localhost:9100/defense/defform/disapprove?id=" + id)
+          .post('http://localhost:9100/defense/defform/disapprove?id=' + id)
           .then(({ data }) => {
             this.action = true;
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
-                type: "success",
+                message: '操作成功',
+                type: 'success',
                 duration: 1500,
                 onClose: () => {
                   this.getTableData();
@@ -409,8 +397,8 @@ export default {
         .then(({ data }) => {
           if (data && data.code === 0) {
             this.$message({
-              message: "操作成功",
-              type: "success",
+              message: '操作成功',
+              type: 'success',
               duration: 1500,
               onClose: () => {
                 this.dialogVisible = false;
@@ -426,8 +414,8 @@ export default {
     uploadSuccess(uploadFile, uploadFiles) {
       console.log(uploadFile);
       this.$message({
-        message: "文件上传成功",
-        type: "success",
+        message: '文件上传成功',
+        type: 'success',
         duration: 1500,
         onClose: () => {
           this.getTableData();
@@ -439,20 +427,20 @@ export default {
     },
     beforeUpload(uploadRawFile) {
       var testmsg = uploadRawFile.name.substring(
-        uploadRawFile.name.lastIndexOf(".") + 1
+        uploadRawFile.name.lastIndexOf('.') + 1
       );
       const extension =
-        testmsg === "doc" || testmsg === "docx" || testmsg === "pdf";
+        testmsg === 'doc' || testmsg === 'docx' || testmsg === 'pdf';
       if (!extension) {
         this.$message({
-          message: "文件类型不支持",
-          type: "error",
+          message: '文件类型不支持',
+          type: 'error',
         });
         return false;
       } else if (uploadRawFile.size / 1024 / 1024 > 10) {
         this.$message({
-          message: "文件太大",
-          type: "error",
+          message: '文件太大',
+          type: 'error',
         });
         return false;
       }
@@ -463,17 +451,17 @@ export default {
         .get(
           `http://localhost:9100/defense/defform/download/${id}/${fileName}`,
           {
-            responseType: "blob",
+            responseType: 'blob',
           }
         )
         .then(({ data }) => {
           const content = data;
           const blob = new Blob([content]);
-          if ("download" in document.createElement("a")) {
+          if ('download' in document.createElement('a')) {
             //非IE下载
-            const a = document.createElement("a");
+            const a = document.createElement('a');
             a.download = fileName;
-            a.style.display = "none";
+            a.style.display = 'none';
             a.href = window.URL.createObjectURL(blob);
             document.body.appendChild(a);
             a.click();
@@ -481,7 +469,7 @@ export default {
             document.body.removeChild(a);
           } else {
             //IE10+下载
-            if (typeof window.navigator.msSaveBlob !== "undefined") {
+            if (typeof window.navigator.msSaveBlob !== 'undefined') {
               window.navigator.msSaveBlob(blob, _this.selected);
             } else {
               let URL = window.URL || window.webkitURL;
@@ -494,7 +482,7 @@ export default {
   },
 };
 </script>
-  
+
 <style scoped>
 .comment-text {
   max-width: 150px;
@@ -513,4 +501,3 @@ export default {
   margin-top: 20px;
 }
 </style>
-  
