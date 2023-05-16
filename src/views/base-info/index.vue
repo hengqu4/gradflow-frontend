@@ -2,97 +2,98 @@
   <div class="app-container">
     <div class="app-container-inner">
       <el-descriptions
-        class="margin-top"
-        title="个人信息"
-        :column="3"
+        class="baseinfo-desc"
+        title="个人基本信息"
+        :column="1"
         size="large"
-        border
+        :border="true"
         style="word-break: break-all; word-wrap: break-word"
       >
         <template #extra>
-          <el-button @click="controlEditShow" type="primary">{{
-            editButtonText
-          }}</el-button>
+          <el-button @click="controlEditShow" type="primary">
+            {{ editButtonText }}
+          </el-button>
         </template>
+        <div v-if="!formIfShow">
+          <el-descriptions-item label-class-name="desc-item-label">
+            <template #label>
+              <div>
+                <el-icon>
+                  <user />
+                </el-icon>
+                姓名
+              </div>
+            </template>
+            {{ UserStore.userInfo.username }}
+          </el-descriptions-item>
 
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              <el-icon>
-                <user />
-              </el-icon>
-              姓名
-            </div>
-          </template>
-          {{ UserStore.userInfo.username }}
-        </el-descriptions-item>
+          <el-descriptions-item label-class-name="desc-item-label">
+            <template #label>
+              <div>
+                <el-icon>
+                  <iphone />
+                </el-icon>
+                电话
+              </div>
+            </template>
+            {{ UserStore.userInfo.phone }}
+          </el-descriptions-item>
 
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              <el-icon>
-                <iphone />
-              </el-icon>
-              电话
-            </div>
-          </template>
-          {{ UserStore.userInfo.phone }}
-        </el-descriptions-item>
+          <el-descriptions-item label-class-name="desc-item-label">
+            <template #label>
+              <div>
+                <el-icon>
+                  <User />
+                </el-icon>
+                性别
+              </div>
+            </template>
+            {{ sex }}
+          </el-descriptions-item>
 
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              <el-icon>
-                <User />
-              </el-icon>
-              性别
-            </div>
-          </template>
-          {{ sex }}
-        </el-descriptions-item>
+          <el-descriptions-item label-class-name="desc-item-label">
+            <template #label>
+              <div>
+                <el-icon>
+                  <tickets />
+                </el-icon>
+                角色
+              </div>
+            </template>
+            {{ UserStore.userInfo.role }}
+          </el-descriptions-item>
 
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              <el-icon>
-                <tickets />
-              </el-icon>
-              角色
-            </div>
-          </template>
-          {{ UserStore.userInfo.role }}
-        </el-descriptions-item>
+          <el-descriptions-item label-class-name="desc-item-label">
+            <template #label>
+              <div>
+                <el-icon>
+                  <office-building />
+                </el-icon>
+                地址
+              </div>
+            </template>
+            {{ UserStore.userInfo.address }}
+          </el-descriptions-item>
 
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              <el-icon>
-                <office-building />
-              </el-icon>
-              地址
-            </div>
-          </template>
-          {{ UserStore.userInfo.address }}
-        </el-descriptions-item>
-
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              <el-icon>
-                <Document />
-              </el-icon>
-              签名
-            </div>
-          </template>
-          {{ UserStore.userInfo.signature }}
-        </el-descriptions-item>
+          <el-descriptions-item label-class-name="desc-item-label">
+            <template #label>
+              <div>
+                <el-icon>
+                  <Document />
+                </el-icon>
+                签名
+              </div>
+            </template>
+            {{ UserStore.userInfo.signature }}
+          </el-descriptions-item>
+        </div>
       </el-descriptions>
 
       <el-form
         label-position="left"
         label-width="100px"
         :model="userInfo"
-        class="edit-form"
+        class="edit-form baseinfo-desc"
         v-show="formIfShow"
         :rules="rules"
         ref="ruleFormRef"
@@ -119,12 +120,14 @@
           <el-input v-model="userInfo.signature" />
         </el-form-item>
 
-        <el-button
-          type="primary"
-          @click="submitForm(ruleFormRef)"
-          :disabled="isSame"
-          >提交</el-button
-        >
+        <div style="justify-content: center; display: flex">
+          <el-button
+            type="primary"
+            @click="submitForm(ruleFormRef)"
+            :disabled="isSame"
+            >提交</el-button
+          >
+        </div>
       </el-form>
     </div>
   </div>
@@ -240,4 +243,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 
 <style scoped lang="scss">
 @import './index';
+.baseinfo-desc {
+  margin: 0 3%;
+}
 </style>
