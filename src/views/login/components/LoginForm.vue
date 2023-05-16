@@ -46,12 +46,14 @@
 </template>
 <script lang="ts" setup>
 import { ref, reactive } from 'vue';
-import type { FormInstance,FormRules } from 'element-plus';
+import type { FormInstance, FormRules } from 'element-plus';
 import { ElNotification } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/modules/user';
 import { getTimeState } from '@/utils/index';
-import {login} from "@/api/user";
+import { login } from '@/api/user';
+import md5 from 'js-md5';
+
 const ruleFormRef = ref<FormInstance>();
 const router = useRouter();
 const UserStore = useUserStore();
@@ -82,28 +84,33 @@ const submitForm = (formEl: FormInstance | undefined) => {
     if (valid) {
       // 登录
       setTimeout(async () => {
-        await UserStore.userLogin(ruleForm)
-            .then(async ()=>{
-              await router.push({
-                path: '/',
-              });
-              ElNotification({
-                title: getTimeState(),
-                message: '欢迎登录 ECNU毕业设计系统',
-                type: 'success',
-                duration: 3000,
-              });
-            })
-          .catch(()=>{
+        const data = {
+          ...ruleForm,
+          password: md5(ruleForm.password),
+        };
+        await UserStore.userLogin(data)
+          .then(async () => {
+            await router.push({
+              path: '/',
+            });
+            ElNotification({
+              title: getTimeState(),
+              message: '欢迎登录 ECNU毕业设计系统',
+              type: 'success',
+              duration: 3000,
+            });
+          })
+          .catch(() => {
             ElNotification({
               title: getTimeState(),
               message: '登录失败',
               type: 'error',
               duration: 3000,
             });
-          }).finally(()=>{
-              loading.value = false;
-            })
+          })
+          .finally(() => {
+            loading.value = false;
+          });
       }, 1000);
     } else {
       console.log('error submit!');

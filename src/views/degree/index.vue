@@ -20,13 +20,16 @@
       </div>
 
       <!-- 学生端操作 -->
-      <div style="display: flex; justify-content: left; align-items: center" v-if="role === 'student'">
+      <div
+        style="display: flex; justify-content: left; align-items: center"
+        v-if="role === 'student'"
+      >
         <el-form :model="myform" label-width="100px" style="width: 50%">
           <el-form-item label="学号">
-            <el-input v-model="myform.authorId" style="width: 70%"/>
+            <el-input v-model="myform.authorId" style="width: 70%" />
           </el-form-item>
           <el-form-item label="姓名">
-            <el-input v-model="myform.authorName" style="width: 70%"/>
+            <el-input v-model="myform.authorName" style="width: 70%" />
           </el-form-item>
           <el-form-item label="学位">
             <el-select
@@ -57,10 +60,10 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="去向省份">
-            <el-input v-model="myform2.shengfen" style="width: 40%"/>
+            <el-input v-model="myform2.shengfen" style="width: 40%" />
           </el-form-item>
           <el-form-item label="工作单位">
-            <el-input v-model="myform2.work" style="width: 40%"/>
+            <el-input v-model="myform2.work" style="width: 40%" />
           </el-form-item>
           <el-form-item label="补充">
             <el-input v-model="myform2.desc" type="textarea" />
@@ -73,7 +76,9 @@
       </div>
 
       <div>
-        <el-divider content-position="left" v-if="role === 'student'">申请记录</el-divider>
+        <el-divider content-position="left" v-if="role === 'student'"
+          >申请记录</el-divider
+        >
       </div>
 
       <el-table
@@ -92,9 +97,7 @@
             <el-table-column prop="otherStuValues" label="备注" width="600" />
             <el-table-column prop="teacherStatus" label="导师审核">
               <template #default="scope">
-                <el-tag type="primary" v-if="scope.row.teacherStatus == 0"
-                  >未审核</el-tag
-                >
+                <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
                 <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
                   >审核不通过</el-tag
                 >
@@ -105,9 +108,7 @@
             </el-table-column>
             <el-table-column prop="adminStatus" label="教务审核">
               <template #default="scope">
-                <el-tag type="primary" v-if="scope.row.adminStatus == 0"
-                  >未审核</el-tag
-                >
+                <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
                 <el-tag type="danger" v-if="scope.row.adminStatus == 1"
                   >审核不通过</el-tag
                 >
@@ -137,9 +138,7 @@
             <el-table-column prop="otherValues" label="备注" width="600" />
             <el-table-column prop="teacherStatus" label="导师审核">
               <template #default="scope">
-                <el-tag type="primary" v-if="scope.row.teacherStatus == 0"
-                  >未审核</el-tag
-                >
+                <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
                 <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
                   >审核不通过</el-tag
                 >
@@ -150,9 +149,7 @@
             </el-table-column>
             <el-table-column prop="adminStatus" label="教务审核">
               <template #default="scope">
-                <el-tag type="primary" v-if="scope.row.adminStatus == 0"
-                  >未审核</el-tag
-                >
+                <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
                 <el-tag type="danger" v-if="scope.row.adminStatus == 1"
                   >审核不通过</el-tag
                 >
@@ -220,10 +217,10 @@
   </div>
 </template>
 <script>
-import { useUserStore } from "@/store/modules/user";
-import { UploadFilled } from "@element-plus/icons-vue";
-import { StarFilled } from "@element-plus/icons-vue";
-import { reactive } from "vue";
+import { useUserStore } from '@/store/modules/user';
+import { UploadFilled } from '@element-plus/icons-vue';
+import { StarFilled } from '@element-plus/icons-vue';
+import { reactive } from 'vue';
 
 const UserStore = useUserStore();
 
@@ -232,49 +229,49 @@ export default {
     return {
       tableData: [
         {
-          authorName: "王小虎",
-          filePath: "ssss",
-          updateTime: "2016-05-02",
-          teacherName: "qjk",
+          authorName: '王小虎',
+          filePath: 'ssss',
+          updateTime: '2016-05-02',
+          teacherName: 'qjk',
           teacherStatus: 0,
-          comment: "垃圾",
+          comment: '垃圾',
           adminStatus: 0,
-          otherValues: "默认值",
-          otherStuValues: "默认值",
+          otherValues: '默认值',
+          otherStuValues: '默认值',
         },
       ],
       myform: reactive({
         authorId: 51255000000,
-        authorName: "",
+        authorName: '',
       }),
       myform2: reactive({
-        date1: "",
-        shengfen: "",
-        work: "",
-        desc: "",
+        date1: '',
+        shengfen: '',
+        work: '',
+        desc: '',
       }),
       type: [],
-      region: "",
-      keywords: "",
+      region: '',
+      keywords: '',
       pageIndex: 1,
       pageSize: 10,
       totalPage: 100,
-      role: "student",
+      role: 'student',
       dataSelections: [],
       dialogVisible: false,
       loading: true,
       action: false,
-      token: "",
+      token: '',
       comment: {
         id: 0,
-        text: "",
+        text: '',
       },
     };
   },
   created() {
     this.role = UserStore.roles[0];
     // todo：这里需要修改，改为本地获取
-    const userStateStr = window.localStorage.getItem("userState");
+    const userStateStr = window.localStorage.getItem('userState');
     const userStateObj = JSON.parse(userStateStr);
     this.token = userStateObj.token;
     this.role = userStateObj.roles[0];
@@ -286,7 +283,7 @@ export default {
     getTableData() {
       this.loading = true;
       this.$request
-        .get("http://localhost:9150/degree/degreeform/list", {
+        .get('http://localhost:9150/degree/degreeform/list', {
           params: {
             page: this.pageIndex,
             limit: this.pageSize,
@@ -302,9 +299,9 @@ export default {
             // 遍历 tableData 数组，为每个对象的 otherValues 属性赋值
             this.tableData.forEach((item) => {
               item.otherValues =
-                "请在所有流程结束后进行学位审批，请注意：该过程不可逆，若需修改请联系教务处。";
+                '请在所有流程结束后进行学位审批，请注意：该过程不可逆，若需修改请联系教务处。';
               item.otherStuValues =
-                "您的申请已经提交，如果学位状态长时间没变化，请询问老师或者教务人员";
+                '您的申请已经提交，如果学位状态长时间没变化，请询问老师或者教务人员';
             });
             this.totalPage = data.page.total;
           } else {
@@ -334,22 +331,22 @@ export default {
         this.disapprove(0);
       }
     },
-    onSubmit(){
+    onSubmit() {
       this.mySubmit();
     },
-    mySubmit(){
-      this.$confirm(`请确定无误后进行提交`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+    mySubmit() {
+      this.$confirm(`请确定无误后进行提交`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       }).then(() => {
         this.$request
-          .post("http://localhost:9150/degree/degreedetail/commit" , this.myform)
+          .post('http://localhost:9150/degree/degreedetail/commit', this.myform)
           .then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
-                type: "success",
+                message: '操作成功',
+                type: 'success',
                 duration: 1500,
                 onClose: () => {
                   this.getTableData();
@@ -369,19 +366,19 @@ export default {
     },
     approve(id) {
       // console.log(id)
-      this.$confirm(`确定让这篇论文审核通过吗? 注意该过程不可逆`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm(`确定让这篇论文审核通过吗? 注意该过程不可逆`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       }).then(() => {
         this.$request
-          .post("http://localhost:9150/degree/degreeform/approve?id=" + id)
+          .post('http://localhost:9150/degree/degreeform/approve?id=' + id)
           .then(({ data }) => {
             this.action = true;
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
-                type: "success",
+                message: '操作成功',
+                type: 'success',
                 duration: 1500,
                 onClose: () => {
                   this.getTableData();
@@ -394,19 +391,19 @@ export default {
       });
     },
     disapprove(id) {
-      this.$confirm(`确定让这篇论文审核通过吗? 注意该过程不可逆`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm(`确定让这篇论文审核通过吗? 注意该过程不可逆`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       }).then(() => {
         this.$request
-          .post("http://localhost:9150/degree/degreeform/disapprove?id=" + id)
+          .post('http://localhost:9150/degree/degreeform/disapprove?id=' + id)
           .then(({ data }) => {
             this.action = true;
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
-                type: "success",
+                message: '操作成功',
+                type: 'success',
                 duration: 1500,
                 onClose: () => {
                   this.getTableData();
@@ -427,8 +424,8 @@ export default {
     uploadSuccess(uploadFile, uploadFiles) {
       console.log(uploadFile);
       this.$message({
-        message: "文件上传成功",
-        type: "success",
+        message: '文件上传成功',
+        type: 'success',
         duration: 1500,
         onClose: () => {
           this.getTableData();
@@ -440,20 +437,20 @@ export default {
     },
     beforeUpload(uploadRawFile) {
       var testmsg = uploadRawFile.name.substring(
-        uploadRawFile.name.lastIndexOf(".") + 1
+        uploadRawFile.name.lastIndexOf('.') + 1
       );
       const extension =
-        testmsg === "doc" || testmsg === "docx" || testmsg === "pdf";
+        testmsg === 'doc' || testmsg === 'docx' || testmsg === 'pdf';
       if (!extension) {
         this.$message({
-          message: "文件类型不支持",
-          type: "error",
+          message: '文件类型不支持',
+          type: 'error',
         });
         return false;
       } else if (uploadRawFile.size / 1024 / 1024 > 10) {
         this.$message({
-          message: "文件太大",
-          type: "error",
+          message: '文件太大',
+          type: 'error',
         });
         return false;
       }
@@ -462,7 +459,7 @@ export default {
   },
 };
 </script>
-  
+
 <style scoped>
 .comment-text {
   max-width: 150px;
@@ -481,4 +478,3 @@ export default {
   margin-top: 20px;
 }
 </style>
-  

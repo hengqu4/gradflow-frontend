@@ -1,7 +1,6 @@
 import request from './request';
 import qs from 'qs';
 
-
 // 返回数据
 // {
 //   "msg": "登录成功",
@@ -25,103 +24,110 @@ import qs from 'qs';
 // }
 
 type CurrentUser = {
-  msg:string;
-  code:number;
+  msg: string;
+  code: number;
   data: {
-    email?:string;
-    phone?:string;
-    institution?:string;
-    username?:string;
-    address?:string;
-    avatar?:string;
-    role?:string;
-    sex?:number;
-    signature?:string;
+    email?: string;
+    phone?: string;
+    institution?: string;
+    username?: string;
+    address?: string;
+    avatar?: string;
+    role?: string;
+    sex?: number;
+    signature?: string;
   };
-  token:string;
+  token: string;
 };
 
-type logoutRes= {
-  msg:string,
-  code:number
-}
+type logoutRes = {
+  msg: string;
+  code: number;
+};
 
-type resetPassRes= {
-  msg:string,
-  code:number
-}
+type resetPassRes = {
+  msg: string;
+  code: number;
+};
 
-type registerRes= {
-    msg:string,
-    code:number
-}
+type registerRes = {
+  msg: string;
+  code: number;
+};
 
-type userUpdateRes={
-     msg:string,
-     code:number;
-     data: {
-         email:string;
-         avatar:string;
-         sex:number;
-         signature:string;
-         role:string;
-         address:string;
-         phone:string;
-     }
-}
+type userUpdateRes = {
+  msg: string;
+  code: number;
+  data: {
+    email: string;
+    avatar: string;
+    sex: number;
+    signature: string;
+    role: string;
+    address: string;
+    phone: string;
+  };
+};
 
 export async function login(data) {
-   return request.post<CurrentUser>('/user/user/login',data)
-      .then((res)=>{
-        const currentUser: CurrentUser = res.data;
-        return currentUser
-      })
+  return request.post<CurrentUser>('/api/user/login', data).then((res) => {
+    const currentUser: CurrentUser = res.data;
+    return currentUser;
+  });
 }
 
 export async function logout(token) {
-  return request.get<logoutRes>('/user/user/logout',{
-    headers: {
-      'token': token,
-    }
-  }).then((res)=>{
-    const data: logoutRes = res.data;
-    return data
-  })
+  console.log('23333');
+  return request
+    .get<logoutRes>('/api/user/logout', {
+      headers: {
+        token: token,
+      },
+    })
+    .then((res) => {
+      console.log('res', res);
+      const data: logoutRes = res.data;
+      return data;
+    });
 }
 
-export async function resetPassword(email,password,token) {
-  return request.post<resetPassRes>('/user/user/resetPassword',
+export async function resetPassword(email, password, token) {
+  return request
+    .post<resetPassRes>(
+      '/api/user/resetPassword',
       qs.stringify({
-          email: email,
-          password: password
+        email: email,
+        password: password,
       }),
       {
         headers: {
-          'token': token,
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      }).then((res)=>{
-        const data: resetPassRes = res.data;
-        return data
-      })
+          token: token,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
+    )
+    .then((res) => {
+      const data: resetPassRes = res.data;
+      return data;
+    });
 }
 
-export async function userInfoUpdate(data,token) {
-    return request.post<userUpdateRes>('/user/user/updateUser',data,
-        {
-            headers: {
-                'token': token,
-            }
-        }).then((res)=>{
-        const data: userUpdateRes = res.data;
-        return data
+export async function userInfoUpdate(data, token) {
+  return request
+    .post<userUpdateRes>('/api/user/updateUser', data, {
+      headers: {
+        token: token,
+      },
     })
+    .then((res) => {
+      const data: userUpdateRes = res.data;
+      return data;
+    });
 }
 
 export async function register(data) {
-    return request.post<registerRes>('/user/user/signUp',data)
-        .then((res)=>{
-        const data: registerRes = res.data;
-        return data
-    })
+  return request.post<registerRes>('/api/user/signUp', data).then((res) => {
+    const data: registerRes = res.data;
+    return data;
+  });
 }

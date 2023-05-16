@@ -1,6 +1,6 @@
-import { defineStore } from 'pinia'
-import {login,logout} from '@/api/user'
-import {createBScroll} from "@better-scroll/core";
+import { defineStore } from 'pinia';
+import { login, logout } from '@/api/user';
+import { createBScroll } from '@better-scroll/core';
 import use = createBScroll.use;
 
 export const useUserStore = defineStore({
@@ -20,11 +20,11 @@ export const useUserStore = defineStore({
   actions: {
     // 登录
     async userLogin(userInfo) {
-      const { email, password } = userInfo
-      let currentUser=await login(userInfo);
-      this.token = currentUser.token
-      this.userInfo = currentUser.data
-      await this.getRoles()
+      const { email, password } = userInfo;
+      let currentUser = await login(userInfo);
+      this.token = currentUser.token;
+      this.userInfo = currentUser.data;
+      await this.getRoles();
       // return new Promise(async (resolve, reject) => {
       //   let currentUser=await login(userInfo);
       //   console.log(currentUser)
@@ -38,34 +38,40 @@ export const useUserStore = defineStore({
     getRoles() {
       return new Promise((resolve, reject) => {
         // 获取权限列表 默认就是超级管理员，因为没有进行接口请求 写死
-        this.roles.push( this.userInfo.role)
-        resolve(this.roles)
-      })
+        this.roles.push(this.userInfo.role);
+        resolve(this.roles);
+      });
     },
     // 获取用户信息 ，如实际应用中 可以通过token通过请求接口在这里获取用户信息
     getInfo(roles) {
       return new Promise((resolve, reject) => {
-        this.roles = roles
-        resolve(roles)
-      })
+        this.roles = roles;
+        resolve(roles);
+      });
     },
     // 退出
     async logout() {
-      let res=false;
-      await logout(this.token).then((response)=>{
-        if(response.code==0){
-          res=true
+      console.log('22222');
+      let res = false;
+      await logout(this.token).then((response) => {
+        console.log('33333');
+        console.log('response', response);
+        if (response.code == 0) {
+          res = true;
         }
-      })
+      });
       return new Promise((resolve, reject) => {
-        if(res){
-          this.token = null
-          this.userInfo = {}
-          this.roles = []
-          resolve(null)
+        if (res) {
+          console.log('退出登录成功');
+          this.token = null;
+          this.userInfo = {};
+          this.roles = [];
+          resolve(null);
+          return;
         }
-        reject(null)
-      })
+        reject(null);
+        console.log('退出登录失败');
+      });
     },
   },
   // 进行持久化存储
@@ -75,4 +81,4 @@ export const useUserStore = defineStore({
     //保存的位置
     storage: window.localStorage, //localstorage
   },
-})
+});
