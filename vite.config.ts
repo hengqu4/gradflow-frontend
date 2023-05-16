@@ -78,13 +78,13 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
-        '/api/review': {
-          target: 'http://localhost:9060', // easymock
+        '/api/prequalification': {
+          target: 'http://localhost:9050',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
-        '/api/prequalification': {
-          target: 'http://localhost:9050',
+        '/api/review': {
+          target: 'http://localhost:9060',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },

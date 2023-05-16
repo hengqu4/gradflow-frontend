@@ -3,6 +3,8 @@
     <span class="el-dropdown-link">
       <el-avatar :size="30" class="avatar" :src="AvatarLogo" />
       {{ userInfo.username }}
+      (<span>{{ roleMap?.[userInfo.role] }}</span
+      >)
       <el-icon class="el-icon--right">
         <arrow-down />
       </el-icon>
@@ -40,6 +42,11 @@ const TagsViewStore = useTagsViewStore();
 const userInfo = computed(() => UserStore.userInfo);
 const person = ref();
 
+const roleMap = {
+  student: '学生',
+  admin: '教务处',
+  teacher: '教授',
+};
 const logOut = async () => {
   ElMessageBox.confirm('您是否确认退出登录?', '温馨提示', {
     confirmButtonText: '确定',
