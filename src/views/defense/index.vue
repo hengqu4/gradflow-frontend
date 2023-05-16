@@ -3,86 +3,91 @@
     <div class="app-container-inner">
       <!-- 上传模块 -->
       <div v-if="role === 'student'">
-        <el-upload
-          class="upload-demo"
-          drag
-          action="http://localhost:9100/defense/defform/upload"
-          :on-change="handleChange"
-          :auto-upload="true"
-          :on-success="uploadSuccess"
-          :show-file-list="false"
-          :on-error="uploadFail"
-          :before-upload="beforeUpload"
-          :headers="{ token: this.token }"
-        >
-          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-          <div class="el-upload__text">拖动文件到这儿或<em>点击上传</em></div>
-          <template #tip>
-            <div class="el-upload__tip">
-              docx, doc, pdf files with a size less than 10mb
-            </div>
-          </template>
-        </el-upload>
-      </div>
+        <el-card style="margin: 15px" header="提交答辩材料" class="card-box">
+          <el-upload
+            class="upload-demo"
+            drag
+            action="http://localhost:9100/defense/defform/upload"
+            :on-change="handleChange"
+            :auto-upload="true"
+            :on-success="uploadSuccess"
+            :show-file-list="false"
+            :on-error="uploadFail"
+            :before-upload="beforeUpload"
+            :headers="{ token: this.token }"
+          >
+            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <div class="el-upload__text">拖动文件到这儿或<em>点击上传</em></div>
+            <template #tip>
+              <div class="el-upload__tip">
+                docx, doc, pdf files with a size less than 10mb
+              </div>
+            </template>
+          </el-upload>
+        </el-card>
 
-      <!-- 学生端操作 -->
-      <el-table
-        :data="tableData"
-        style="width: 100%; margin-top: 20px"
-        border
-        v-if="role === 'student'"
-        v-loading="loading"
-      >
-        <el-table-column prop="authorName" label="姓名" width="180">
-        </el-table-column>
-        <el-table-column prop="filePath" label="预审表" width="180">
-          <template #default="scope">
-            <el-link
-              type="primary"
-              v-if="scope.row.filePath !== null && scope.row.filePath !== ''"
-              @click="downLoad(scope.row.id, scope.row.filePath)"
-              >点击下载</el-link
-            >
-            <span v-else>暂未上传文件</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="updateTime" label="修改时间" width="180">
-        </el-table-column>
-        <el-table-column prop="teacherName" label="导师"> </el-table-column>
-        <el-table-column prop="teacherStatus" label="导师审核">
-          <template #default="scope">
-            <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
-            <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
-              >审核不通过</el-tag
-            >
-            <el-tag type="success" v-if="scope.row.teacherStatus == 2"
-              >审核通过</el-tag
-            >
-          </template>
-        </el-table-column>
-        <el-table-column prop="comment" label="导师评价">
-          <template #default="scope">
-            <div>
-              {{
-                scope.row.comment === null || scope.row.comment === ''
-                  ? '无'
-                  : scope.row.comment
-              }}
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="adminStatus" label="教务审核">
-          <template #default="scope">
-            <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
-            <el-tag type="danger" v-if="scope.row.adminStatus == 1"
-              >审核不通过</el-tag
-            >
-            <el-tag type="success" v-if="scope.row.adminStatus == 2"
-              >审核通过</el-tag
-            >
-          </template>
-        </el-table-column>
-      </el-table>
+        <!-- 学生端操作 -->
+        <el-card style="margin: 15px" header="提交记录" class="card-box">
+          <el-table
+            :data="tableData"
+            style="width: 100%; margin-top: 20px"
+            :border="true"
+            v-loading="loading"
+          >
+            <el-table-column prop="authorName" label="姓名" width="180">
+            </el-table-column>
+            <el-table-column prop="filePath" label="答辩材料" width="180">
+              <template #default="scope">
+                <el-link
+                  type="primary"
+                  v-if="
+                    scope.row.filePath !== null && scope.row.filePath !== ''
+                  "
+                  @click="downLoad(scope.row.id, scope.row.filePath)"
+                  >点击下载</el-link
+                >
+                <span v-else>暂未上传文件</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="updateTime" label="修改时间" width="180">
+            </el-table-column>
+            <el-table-column prop="teacherName" label="导师"> </el-table-column>
+            <el-table-column prop="teacherStatus" label="导师审核">
+              <template #default="scope">
+                <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
+                <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
+                  >审核不通过</el-tag
+                >
+                <el-tag type="success" v-if="scope.row.teacherStatus == 2"
+                  >审核通过</el-tag
+                >
+              </template>
+            </el-table-column>
+            <el-table-column prop="comment" label="导师评价">
+              <template #default="scope">
+                <div>
+                  {{
+                    scope.row.comment === null || scope.row.comment === ''
+                      ? '无'
+                      : scope.row.comment
+                  }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="adminStatus" label="教务审核">
+              <template #default="scope">
+                <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
+                <el-tag type="danger" v-if="scope.row.adminStatus == 1"
+                  >审核不通过</el-tag
+                >
+                <el-tag type="success" v-if="scope.row.adminStatus == 2"
+                  >审核通过</el-tag
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+      </div>
 
       <!-- 顶部栏操作 -->
       <div
@@ -123,7 +128,7 @@
         </el-table-column>
         <el-table-column prop="authorName" label="姓名" width="100">
         </el-table-column>
-        <el-table-column prop="filePath" label="预审表" width="150">
+        <el-table-column prop="filePath" label="答辩材料" width="150">
           <template #default="scope">
             <el-link
               type="primary"
