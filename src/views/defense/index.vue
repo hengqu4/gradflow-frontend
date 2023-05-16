@@ -243,6 +243,13 @@
 <script>
 import { useUserStore } from '@/store/modules/user';
 import { UploadFilled } from '@element-plus/icons-vue';
+import {
+  apiDefenseList,
+  apiDefenseApprove,
+  apiDefenseDisapprove,
+  apiDefenseComment,
+  apiDefenseDownload,
+} from '@/api/defense';
 
 const UserStore = useUserStore();
 
@@ -251,12 +258,12 @@ export default {
     return {
       tableData: [
         {
-          authorName: '王小虎',
-          filePath: 'ssss',
-          updateTime: '2016-05-02',
-          teacherName: 'qjk',
+          authorName: '',
+          filePath: '',
+          updateTime: '',
+          teacherName: '',
           teacherStatus: 0,
-          comment: '垃圾',
+          comment: '',
           adminStatus: 0,
         },
       ],
@@ -290,24 +297,19 @@ export default {
   methods: {
     getTableData() {
       this.loading = true;
-      this.$request
-        .get('http://localhost:9100/defense/defform/list', {
-          params: {
-            page: this.pageIndex,
-            limit: this.pageSize,
-            key: this.keywords,
-          },
-        })
-        .then(({ data }) => {
-          this.loading = false;
-          if (data && data.code === 0) {
-            // console.log(data)
-            this.tableData = data.page.records;
-            this.totalPage = data.page.total;
-          } else {
-            this.tableData = [];
-          }
-        });
+      apiDefenseList({
+        page: this.pageIndex,
+        limit: this.pageSize,
+        key: this.keywords,
+      }).then((data) => {
+        this.loading = false;
+        if (data && data.code === 0) {
+          this.tableData = data.page.records;
+          this.totalPage = data.page.total;
+        } else {
+          this.tableData = [];
+        }
+      });
     },
     sizeChangeHandle(val) {
       this.pageSize = val;
@@ -344,23 +346,20 @@ export default {
         cancelButtonText: '取消',
         type: 'warning',
       }).then(() => {
-        this.$request
-          .post('http://localhost:9100/defense/defform/approve?id=' + id)
-          .then(({ data }) => {
-            this.action = true;
-            if (data && data.code === 0) {
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.getTableData();
-                },
-              });
-            } else {
-              this.$message.error(data.msg);
-            }
-          });
+        apiDefenseApprove(id).then((data) => {
+          if (data && data.code === 0) {
+            this.$message({
+              message: '操作成功',
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.getTableData();
+              },
+            });
+          } else {
+            this.$message.error(data.msg);
+          }
+        });
       });
     },
     disapprove(id) {
@@ -369,23 +368,20 @@ export default {
         cancelButtonText: '取消',
         type: 'warning',
       }).then(() => {
-        this.$request
-          .post('http://localhost:9100/defense/defform/disapprove?id=' + id)
-          .then(({ data }) => {
-            this.action = true;
-            if (data && data.code === 0) {
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.getTableData();
-                },
-              });
-            } else {
-              this.$message.error(data.msg);
-            }
-          });
+        apiDefenseDisapprove(id).then((data) => {
+          if (data && data.code === 0) {
+            this.$message({
+              message: '操作成功',
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.getTableData();
+              },
+            });
+          } else {
+            this.$message.error(data.msg);
+          }
+        });
       });
     },
     openEdit(row) {
@@ -394,26 +390,21 @@ export default {
       this.comment.text = row.comment;
     },
     submitComment() {
-      this.$request
-        .post(
-          `http://localhost:9100/defense/defform/comment/${this.comment.id}`,
-          this.comment.text
-        )
-        .then(({ data }) => {
-          if (data && data.code === 0) {
-            this.$message({
-              message: '操作成功',
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.dialogVisible = false;
-                this.getTableData();
-              },
-            });
-          } else {
-            this.$message.error(data.msg);
-          }
-        });
+      apiDefenseComment(this.comment.id, this.comment.text).then((data) => {
+        if (data && data.code === 0) {
+          this.$message({
+            message: '操作成功',
+            type: 'success',
+            duration: 1500,
+            onClose: () => {
+              this.dialogVisible = false;
+              this.getTableData();
+            },
+          });
+        } else {
+          this.$message.error(data.msg);
+        }
+      });
     },
     handleChange(uploadFile, uploadFiles) {},
     uploadSuccess(uploadFile, uploadFiles) {
@@ -452,37 +443,30 @@ export default {
       return true;
     },
     downLoad(id, fileName) {
-      this.$request
-        .get(
-          `http://localhost:9100/defense/defform/download/${id}/${fileName}`,
-          {
-            responseType: 'blob',
-          }
-        )
-        .then(({ data }) => {
-          const content = data;
-          const blob = new Blob([content]);
-          if ('download' in document.createElement('a')) {
-            //非IE下载
-            const a = document.createElement('a');
-            a.download = fileName;
-            a.style.display = 'none';
-            a.href = window.URL.createObjectURL(blob);
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(a.href);
-            document.body.removeChild(a);
+      apiDefenseDownload(id, fileName).then((data) => {
+        const content = data;
+        const blob = new Blob([content]);
+        if ('download' in document.createElement('a')) {
+          //非IE下载
+          const a = document.createElement('a');
+          a.download = fileName;
+          a.style.display = 'none';
+          a.href = window.URL.createObjectURL(blob);
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(a.href);
+          document.body.removeChild(a);
+        } else {
+          //IE10+下载
+          if (typeof window.navigator.msSaveBlob !== 'undefined') {
+            window.navigator.msSaveBlob(blob, _this.selected);
           } else {
-            //IE10+下载
-            if (typeof window.navigator.msSaveBlob !== 'undefined') {
-              window.navigator.msSaveBlob(blob, _this.selected);
-            } else {
-              let URL = window.URL || window.webkitURL;
-              let downloadUrl = URL.createObjectURL(blob);
-              window.location = downloadUrl;
-            }
+            let URL = window.URL || window.webkitURL;
+            let downloadUrl = URL.createObjectURL(blob);
+            window.location = downloadUrl;
           }
-        });
+        }
+      });
     },
   },
 };
