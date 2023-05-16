@@ -2,10 +2,10 @@
   <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="0">
     <div style="display: flex; align-items: center; justify-content: center">
       <el-form-item label="" prop="role">
-        <!-- <el-radio-group v-model="ruleForm.role">
+        <el-radio-group v-model="ruleForm.role">
           <el-radio-button label="student">Student</el-radio-button>
           <el-radio-button label="teacher">Teacher</el-radio-button>
-        </el-radio-group> -->
+        </el-radio-group>
       </el-form-item>
     </div>
 
@@ -82,7 +82,6 @@ import { reactive, ref, defineEmits } from 'vue';
 import { ElMessage, ElNotification, FormInstance } from 'element-plus';
 import { register } from '@/api/user';
 import { getTimeState } from '@/utils';
-import md5 from 'js-md5';
 
 const ruleFormRef = ref<FormInstance>();
 const passwordType = ref('password');
@@ -154,12 +153,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
       // 提交注册数据
       const { confirmPassword, ...rest } = ruleForm;
       const formToSubmit = { ...rest };
-
-      const data = {
-        ...formToSubmit,
-        password: md5(formToSubmit.password),
-      };
-      register(data)
+      register(formToSubmit)
         .then((res) => {
           if (res.code == 0) {
             // 通知父组件 显示登录表单
