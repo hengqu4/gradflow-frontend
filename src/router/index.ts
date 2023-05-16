@@ -70,6 +70,24 @@ export const constantRoutes: Array<RouteRecordRaw & extendRoute> = [
   },
 
   {
+    path: '/base-info',
+    component: Layout,
+    name: 'base-info',
+    redirect: '/base-info',
+    children: [
+      {
+        path: '/base-info',
+        component: () => import('@/views/base-info/index.vue'),
+        meta: {
+          title: '基本信息',
+          keepAlive: true,
+          icon: 'User',
+          role: ['other'],
+        },
+      },
+    ],
+  },
+  {
     path: '/prequalification',
     component: Layout,
     name: 'prequalification',
