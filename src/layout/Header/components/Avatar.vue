@@ -47,7 +47,6 @@ const logOut = async () => {
     type: 'warning',
   })
     .then(async () => {
-      console.log('111111');
       await UserStore.logout();
       await router.push({ path: '/login' });
       TagsViewStore.clearVisitedView();

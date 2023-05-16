@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia';
 import { login, logout } from '@/api/user';
 import { createBScroll } from '@better-scroll/core';
+import { useRoute, useRouter } from 'vue-router';
 import use = createBScroll.use;
+const router = useRouter();
 
 export const useUserStore = defineStore({
   // id: 必须的，在所有 Store 中唯一
@@ -44,6 +46,12 @@ export const useUserStore = defineStore({
     // 退出
     async logout() {
       let res = false;
+
+      // 临时处理redis关闭重启的问题，强行清空storage并跳转至login
+      console.log('removeItem');
+      localStorage.removeItem('userState');
+      router.push({ path: '/login' });
+
       await logout(this.token).then((response) => {
         if (response.code == 0) {
           console.log('进入这里');
@@ -56,9 +64,9 @@ export const useUserStore = defineStore({
           this.token = null;
           this.userInfo = {};
           this.roles = [];
-          resolve(null);
+          return resolve(null);
         }
-        reject(null);
+        return reject(null);
       });
     },
   },

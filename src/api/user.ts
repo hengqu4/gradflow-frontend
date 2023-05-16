@@ -77,7 +77,6 @@ export async function login(data) {
 }
 
 export async function logout(token) {
-  console.log('23333');
   return request
     .get<logoutRes>('/api/user/logout', {
       headers: {
@@ -85,7 +84,6 @@ export async function logout(token) {
       },
     })
     .then((res) => {
-      console.log('res', res);
       const data: logoutRes = res.data;
       return data;
     });
