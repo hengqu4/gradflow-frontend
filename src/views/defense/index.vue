@@ -24,7 +24,6 @@
               class="upload-demo"
               drag
               action="/api/defense/defform/upload"
-              :headers="uploadHeaders"
               :on-change="handleChange"
               :auto-upload="true"
               :on-success="uploadSuccess"

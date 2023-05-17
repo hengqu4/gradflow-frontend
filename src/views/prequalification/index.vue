@@ -7,7 +7,6 @@
             class="upload-demo"
             drag
             action="/api/prequalification/upload"
-            :headers="uploadHeaders"
             :on-change="handleChange"
             :auto-upload="true"
             :on-success="uploadSuccess"
