@@ -93,6 +93,11 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
+        '/api/degree': {
+          target: 'http://localhost:9150',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
       },
     },
     // 生产环境打包配置
