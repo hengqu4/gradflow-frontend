@@ -20,13 +20,18 @@
         <el-card style="margin: 0 15px; overflow-y: hidden" class="card-box">
           <template #header>
             <div class="card-header">
-              <span>光荣榜</span>
+              <div>
+                <span>光荣榜</span>
+              </div>
               <el-button class="button" text>更多>></el-button>
             </div>
           </template>
 
           <div v-for="(item, index) in honorData" :key="index">
-            <div class="home-news-item">
+            <div class="home-news-item" style="display: flex">
+              <el-icon style="font-size: 20px; color: #e98316">
+                <Medal />
+              </el-icon>
               <div class="news-title">
                 {{ item }}
               </div>
@@ -51,9 +56,12 @@
           <div v-for="(item, index) in newsData" :key="index">
             <div class="home-news-item">
               <div class="news-title">
+                <el-icon style="font-size: 20px; color: #74109f">
+                  <DataAnalysis />
+                </el-icon>
                 {{ item.title }}
               </div>
-              <div class="news-detail">
+              <div class="news-detail" style="margin-left: 25px">
                 {{ item.detail }}
               </div>
             </div>
@@ -69,12 +77,19 @@
             </div>
           </template>
 
-          <div v-for="(item, index) in noticeData" :key="index">
+          <div
+            v-for="(item, index) in noticeData"
+            :key="index"
+            style="display: flex"
+          >
             <div class="home-news-item">
               <div class="news-title">
+                <el-icon style="font-size: 18px; color: #950202">
+                  <Notebook />
+                </el-icon>
                 {{ item.title }}
               </div>
-              <div class="news-detail">
+              <div class="news-detail" style="margin-left: 25px">
                 {{ item.detail }}
               </div>
             </div>
@@ -89,6 +104,7 @@
 import img1 from '@/assets/img/img1.jpg';
 import img2 from '@/assets/img/img2.jpg';
 import img3 from '@/assets/img/img3.jpg';
+import { Medal, DataAnalysis, Notebook } from '@element-plus/icons-vue';
 
 const honorData = [
   '学院研究生团队斩获首届中国研究生金融科技创新大赛全国一等奖唯一金奖',
@@ -171,8 +187,9 @@ const noticeData = [
 }
 
 .home-news-item {
-  background: var(--el-fill-color-lighter);
+  // background: var(--el-fill-color-lighter);
   border-top: 1px solid var(--el-table-border);
+  border-bottom: 1px solid #e3e2e2;
   color: var(--el-table-text-color);
   padding: 8px 0;
   margin: 1px 0;
