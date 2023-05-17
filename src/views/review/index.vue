@@ -295,7 +295,7 @@ import {
   apiReviewDownload,
 } from '@/api/review';
 
-// import { apiReviewList } from '@/api/review';
+import { apiPrequalList } from '@/api/prequalification';
 
 const UserStore = useUserStore();
 
@@ -337,7 +337,7 @@ export default {
     console.log('论文审核 role', this.role);
 
     if (this.role == 'student') {
-      apiReviewList({
+      apiPrequalList({
         page: this.pageIndex,
         limit: this.pageSize,
         key: this.keywords,
@@ -350,6 +350,7 @@ export default {
             const record = records[records.length - 1];
             if (record.teacherStatus == 2 && record.adminStatus == 2) {
               this.canUpload = true;
+              console.log('  this.canUpload', this.canUpload);
             }
           }
           if (this.canUpload) {
