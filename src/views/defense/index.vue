@@ -2,94 +2,111 @@
   <div class="app-container">
     <div class="app-container-inner">
       <!-- 上传模块 -->
-      <div v-if="role === 'student'">
-        <el-card style="margin: 15px" header="提交答辩材料" class="card-box">
-          <!-- 
+      <div v-if="role === 'student'" v-loading="loading">
+        <div v-if="!canUpload">
+          <div style="font-size: 20px">
+            <div class="display-center">您没有访问权限！</div>
+            <div class="display-center">请检查毕业论文是否通过审核。</div>
+          </div>
+          <div class="display-center">
+            <img
+              style="width: 40%"
+              src="@/assets/403_images/403.png"
+              alt="403"
+            />
+          </div>
+        </div>
+        <div v-else>
+          <el-card style="margin: 15px" header="提交答辩材料" class="card-box">
+            <!-- 
             action="http://localhost:9100/defense/defform/upload" -->
-          <el-upload
-            class="upload-demo"
-            drag
-            action="/api/defense/defform/upload"
-            :on-change="handleChange"
-            :auto-upload="true"
-            :on-success="uploadSuccess"
-            :show-file-list="false"
-            :on-error="uploadFail"
-            :before-upload="beforeUpload"
-            :headers="{ token: this.token }"
-          >
-            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-            <div class="el-upload__text">拖动文件到这儿或<em>点击上传</em></div>
-            <template #tip>
-              <div class="el-upload__tip">
-                docx, doc, pdf files with a size less than 10mb
+            <el-upload
+              class="upload-demo"
+              drag
+              action="/api/defense/defform/upload"
+              :on-change="handleChange"
+              :auto-upload="true"
+              :on-success="uploadSuccess"
+              :show-file-list="false"
+              :on-error="uploadFail"
+              :before-upload="beforeUpload"
+              :headers="{ token: this.token }"
+            >
+              <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+              <div class="el-upload__text">
+                拖动文件到这儿或<em>点击上传</em>
               </div>
-            </template>
-          </el-upload>
-        </el-card>
-
-        <!-- 学生端操作 -->
-        <el-card style="margin: 15px" header="提交记录" class="card-box">
-          <el-table
-            :data="tableData"
-            style="width: 100%; margin-top: 20px"
-            :border="true"
-            v-loading="loading"
-          >
-            <el-table-column prop="authorName" label="姓名" width="80">
-            </el-table-column>
-            <el-table-column prop="filePath" label="答辩材料">
-              <template #default="scope">
-                <el-link
-                  type="primary"
-                  v-if="
-                    scope.row.filePath !== null && scope.row.filePath !== ''
-                  "
-                  @click="downLoad(scope.row.id, scope.row.filePath)"
-                  >点击下载</el-link
-                >
-                <span v-else>暂未上传文件</span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="updateTime" label="修改时间">
-            </el-table-column>
-            <el-table-column prop="teacherName" label="导师" width="80">
-            </el-table-column>
-            <el-table-column prop="teacherStatus" label="导师审核">
-              <template #default="scope">
-                <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
-                <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
-                  >审核不通过</el-tag
-                >
-                <el-tag type="success" v-if="scope.row.teacherStatus == 2"
-                  >审核通过</el-tag
-                >
-              </template>
-            </el-table-column>
-            <el-table-column prop="comment" label="导师评价">
-              <template #default="scope">
-                <div>
-                  {{
-                    scope.row.comment === null || scope.row.comment === ''
-                      ? '无'
-                      : scope.row.comment
-                  }}
+              <template #tip>
+                <div class="el-upload__tip">
+                  docx, doc, pdf files with a size less than 10mb
                 </div>
               </template>
-            </el-table-column>
-            <el-table-column prop="adminStatus" label="教务审核">
-              <template #default="scope">
-                <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
-                <el-tag type="danger" v-if="scope.row.adminStatus == 1"
-                  >审核不通过</el-tag
-                >
-                <el-tag type="success" v-if="scope.row.adminStatus == 2"
-                  >审核通过</el-tag
-                >
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
+            </el-upload>
+          </el-card>
+
+          <!-- 学生端操作 -->
+          <el-card style="margin: 15px" header="提交记录" class="card-box">
+            <el-table
+              :data="tableData"
+              style="width: 100%; margin-top: 20px"
+              :border="true"
+              v-loading="loading"
+            >
+              <el-table-column prop="authorName" label="姓名" width="80">
+              </el-table-column>
+              <el-table-column prop="filePath" label="答辩材料">
+                <template #default="scope">
+                  <el-link
+                    type="primary"
+                    v-if="
+                      scope.row.filePath !== null && scope.row.filePath !== ''
+                    "
+                    @click="downLoad(scope.row.id, scope.row.filePath)"
+                    >点击下载</el-link
+                  >
+                  <span v-else>暂未上传文件</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="updateTime" label="修改时间">
+              </el-table-column>
+              <el-table-column prop="teacherName" label="导师" width="80">
+              </el-table-column>
+              <el-table-column prop="teacherStatus" label="导师审核">
+                <template #default="scope">
+                  <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
+                  <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
+                    >审核不通过</el-tag
+                  >
+                  <el-tag type="success" v-if="scope.row.teacherStatus == 2"
+                    >审核通过</el-tag
+                  >
+                </template>
+              </el-table-column>
+              <el-table-column prop="comment" label="导师评价">
+                <template #default="scope">
+                  <div>
+                    {{
+                      scope.row.comment === null || scope.row.comment === ''
+                        ? '无'
+                        : scope.row.comment
+                    }}
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="adminStatus" label="教务审核">
+                <template #default="scope">
+                  <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
+                  <el-tag type="danger" v-if="scope.row.adminStatus == 1"
+                    >审核不通过</el-tag
+                  >
+                  <el-tag type="success" v-if="scope.row.adminStatus == 2"
+                    >审核通过</el-tag
+                  >
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-card>
+        </div>
       </div>
 
       <!-- 顶部栏操作 -->
@@ -286,6 +303,7 @@ import {
   apiDefenseComment,
   apiDefenseDownload,
 } from '@/api/defense';
+import { apiReviewList } from '@/api/review';
 
 const UserStore = useUserStore();
 
@@ -317,6 +335,7 @@ export default {
         id: 0,
         text: '',
       },
+      canUpload: false,
     };
   },
   created() {
@@ -326,9 +345,32 @@ export default {
     const userStateObj = JSON.parse(userStateStr);
     this.token = userStateObj.token;
     this.role = userStateObj.roles[0];
-    console.log(this.role);
-    this.getTableData();
-    // console.log(this.token)
+    console.log('进入毕业答辩', this.role);
+
+    if (this.role == 'student') {
+      apiReviewList({
+        page: this.pageIndex,
+        limit: this.pageSize,
+        key: this.keywords,
+      }).then((data) => {
+        if (data && data.code === 0) {
+          this.loading = false;
+          const records = data.data?.records;
+
+          if (records.length > 0) {
+            const record = records[records.length - 1];
+            if (record.teacherStatus == 2 && record.adminStatus == 2) {
+              this.canUpload = true;
+            }
+          }
+          if (this.canUpload) {
+            this.getTableData();
+          }
+        }
+      });
+    } else {
+      this.getTableData();
+    }
   },
   methods: {
     getTableData() {

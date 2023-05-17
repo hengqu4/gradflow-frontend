@@ -2,7 +2,7 @@ import request from './request';
 
 export async function apiDegreeList(data) {
   return request
-    .get<any>('/api/defense/defform/list', {
+    .get<any>('/api/degree/defform/list', {
       params: data,
     })
     .then((res) => {
@@ -12,7 +12,7 @@ export async function apiDegreeList(data) {
 }
 
 export async function apiDegreeApprove(data) {
-  return request.post<any>('/api/defense/defform/approve', data).then((res) => {
+  return request.post<any>('/api/degree/defform/approve', data).then((res) => {
     const data = res.data;
     return data;
   });
@@ -20,7 +20,7 @@ export async function apiDegreeApprove(data) {
 
 export async function apiDegreeDisapprove(data) {
   return request
-    .post<any>('/api/defense/defform/disapprove', data)
+    .post<any>('/api/degree/defform/disapprove', data)
     .then((res) => {
       const data = res.data;
       return data;

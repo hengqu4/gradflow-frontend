@@ -18,3 +18,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.display-center {
+  display: flex;
+  justify-content: center;
+}

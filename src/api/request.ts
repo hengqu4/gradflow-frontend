@@ -1,6 +1,11 @@
-import axios, { AxiosInstance, AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
-import { ElMessage } from 'element-plus'
-import { useUserStore } from '@/store/modules/user'
+import axios, {
+  AxiosInstance,
+  AxiosError,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from 'axios';
+import { ElMessage } from 'element-plus';
+import { useUserStore } from '@/store/modules/user';
 // 创建axios实例 进行基本参数配置
 const service = axios.create({
   // 默认请求地址，根据环境的不同可在.env 文件中进行修改
@@ -10,9 +15,9 @@ const service = axios.create({
   // 跨域时候允许携带凭证
   withCredentials: true,
   headers: {
-    'Content-Type': "application/json; charset=utf-8"
-  }
-})
+    'Content-Type': 'application/json; charset=utf-8',
+  },
+});
 
 //  request interceptor 接口请求拦截
 service.interceptors.request.use(
@@ -21,38 +26,38 @@ service.interceptors.request.use(
      * 用户登录之后获取服务端返回的token,后面每次请求都在请求头中带上token进行JWT校验
      * token 存储在本地储存中（storage）、vuex、pinia
      */
-    const userStore = useUserStore()
-    const token: string = userStore.token
+    const userStore = useUserStore();
+    const token: string = userStore.token;
     // 自定义请求头
     if (token) {
-      config.headers['token'] = token
+      config.headers['token'] = token;
     }
-    return config
+    return config;
   },
   (error: AxiosError) => {
     // 请求错误，这里可以用全局提示框进行提示
-    return Promise.reject(error)
-  },
-)
+    return Promise.reject(error);
+  }
+);
 
 //  response interceptor 接口响应拦截
 service.interceptors.response.use(
-    (response: AxiosResponse<any>)=> {
+  (response: AxiosResponse<any>) => {
     // 直接返回res，当然你也可以只返回res.data
     // 系统如果有自定义code也可以在这里处理
-    const userStore = useUserStore()
-    if (response.data.token!=null){
-        userStore.token=response.data.token
+    const userStore = useUserStore();
+    if (response.data.token != null) {
+      userStore.token = response.data.token;
     }
 
-    if(response.data.code==0) {
-        return response
+    if (response.data.code == 0) {
+      return response;
     }
   },
   (error: AxiosError) => {
-    return Promise.reject(error)
-  },
-)
+    return Promise.reject(error);
+  }
+);
 
 /**
  * @description 显示错误消息
@@ -61,12 +66,17 @@ service.interceptors.response.use(
  * type 消息类型
  * duration 消息持续时间
  */
-function showErrMessage(opt, err, type: any = 'error', duration: number = 5000) {
+function showErrMessage(
+  opt,
+  err,
+  type: any = 'error',
+  duration: number = 5000
+) {
   ElMessage({
-    message: err.msg,
+    message: err,
     type: type,
     duration: duration,
-  })
+  });
 }
 
-export default service
+export default service;

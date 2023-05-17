@@ -1,121 +1,144 @@
 <template>
   <div class="app-container">
     <div class="app-container-inner">
-      <!-- 学生端操作 -->
-      <!-- <el-table
-        :data="tableData"
-        style="width: 100%; margin-top: 20px"
-        :border="true"
+      <!-- 顶部栏操作 -->
+      <div
+        style="margin-bottom: 20px"
         v-if="role === 'student'"
         v-loading="loading"
       >
-      </el-table> -->
-
-      <!-- 顶部栏操作 -->
-      <div style="margin-bottom: 20px" v-if="role === 'student'">
         <!-- <h2>学位申请表</h2> -->
 
         <!-- 学生端操作 -->
-        <el-card style="margin: 15px" header="学位申请表" class="card-box">
-          <div
-            style="display: flex; justify-content: center; align-items: center"
-          >
-            <el-form :model="myform" label-width="100px" style="width: 50%">
-              <el-form-item label="学号" :rules="[{ required: true }]">
-                <el-input v-model="myform.authorId" />
-              </el-form-item>
-              <el-form-item label="姓名" :rules="[{ required: true }]">
-                <el-input v-model="myform.authorName" />
-              </el-form-item>
-              <el-form-item label="学位" :rules="[{ required: true }]">
-                <el-select v-model="region" placeholder="请选择你的学位">
-                  <el-option label="硕士" value="硕士" />
-                  <el-option label="本科" value="本科" />
-                </el-select>
-              </el-form-item>
-              <el-form-item label="毕业时间" :rules="[{ required: true }]">
-                <el-date-picker
-                  v-model="myform2.date1"
-                  type="date"
-                  placeholder="请选择日期"
-                />
-              </el-form-item>
-              <el-form-item label="毕业去向" :rules="[{ required: true }]">
-                <el-checkbox-group v-model="type">
-                  <el-checkbox label="待业" name="type" />
-                  <el-checkbox label="就业" name="type" />
-                  <el-checkbox label="升学" name="type" />
-                  <el-checkbox label="其他" name="type" />
-                </el-checkbox-group>
-              </el-form-item>
-              <el-form-item label="去向省份" :rules="[{ required: true }]">
-                <el-input v-model="myform2.shengfen" />
-              </el-form-item>
-              <el-form-item label="工作单位" :rules="[{ required: true }]">
-                <el-input v-model="myform2.work" type="textarea" />
-              </el-form-item>
-              <el-form-item label="补充">
-                <el-input v-model="myform2.desc" type="textarea" />
-              </el-form-item>
-              <div style="display: flex; justify-content: center">
-                <el-button type="primary" @click="onSubmit">提交</el-button>
-                <el-button>取消</el-button>
-              </div>
-            </el-form>
+        <div v-if="!canUpload">
+          <div style="font-size: 20px">
+            <div class="display-center">您没有访问权限！</div>
+            <div class="display-center">请检查毕业答辩是否通过。</div>
           </div>
-        </el-card>
-        <el-card style="margin: 15px" header="申请记录">
-          <el-table
-            :data="tableData"
-            tooltip-effect="dark"
-            style="width: 100%"
-            @selection-change="handleSelectionChange"
-            v-loading="loading"
-          >
-            <el-table-column prop="teacherName" label="导师姓名" width="150" />
-            <el-table-column label="学生相关信息">
-              <el-table-column prop="authorName" label="学生姓名" width="120" />
-              <el-table-column el-table-column label="学位审核信息">
-                <el-table-column prop="updateTime" label="修改时间" />
-                <el-table-column prop="otherStuValues" label="备注">
-                  <template #default="scope">
-                    <el-tooltip
-                      class="box-item"
-                      effect="dark"
-                      :content="scope.row.otherStuValues"
-                    >
-                      <div class="tooltip-ellipsis">
-                        {{ scope.row.otherStuValues }}
-                      </div>
-                    </el-tooltip>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="teacherStatus" label="导师审核">
-                  <template #default="scope">
-                    <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
-                    <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
-                      >审核不通过</el-tag
-                    >
-                    <el-tag type="success" v-if="scope.row.teacherStatus == 2"
-                      >审核通过</el-tag
-                    >
-                  </template>
-                </el-table-column>
-                <el-table-column prop="adminStatus" label="教务审核">
-                  <template #default="scope">
-                    <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
-                    <el-tag type="danger" v-if="scope.row.adminStatus == 1"
-                      >审核不通过</el-tag
-                    >
-                    <el-tag type="success" v-if="scope.row.adminStatus == 2"
-                      >审核通过</el-tag
-                    >
-                  </template>
+          <div class="display-center">
+            <img
+              style="width: 40%"
+              src="@/assets/403_images/403.png"
+              alt="403"
+            />
+          </div>
+        </div>
+        <div v-else>
+          <el-card style="margin: 15px" header="学位申请表" class="card-box">
+            <div
+              style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <el-form :model="myform" label-width="100px" style="width: 50%">
+                <el-form-item label="学号" :rules="[{ required: true }]">
+                  <el-input v-model="myform.authorId" />
+                </el-form-item>
+                <el-form-item label="姓名" :rules="[{ required: true }]">
+                  <el-input v-model="myform.authorName" />
+                </el-form-item>
+                <el-form-item label="学位" :rules="[{ required: true }]">
+                  <el-select v-model="region" placeholder="请选择你的学位">
+                    <el-option label="硕士" value="硕士" />
+                    <el-option label="本科" value="本科" />
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="毕业时间" :rules="[{ required: true }]">
+                  <el-date-picker
+                    v-model="myform2.date1"
+                    type="date"
+                    placeholder="请选择日期"
+                  />
+                </el-form-item>
+                <el-form-item label="毕业去向" :rules="[{ required: true }]">
+                  <el-checkbox-group v-model="type">
+                    <el-checkbox label="待业" name="type" />
+                    <el-checkbox label="就业" name="type" />
+                    <el-checkbox label="升学" name="type" />
+                    <el-checkbox label="其他" name="type" />
+                  </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label="去向省份" :rules="[{ required: true }]">
+                  <el-input v-model="myform2.shengfen" />
+                </el-form-item>
+                <el-form-item label="工作单位" :rules="[{ required: true }]">
+                  <el-input v-model="myform2.work" type="textarea" />
+                </el-form-item>
+                <el-form-item label="补充">
+                  <el-input v-model="myform2.desc" type="textarea" />
+                </el-form-item>
+                <div style="display: flex; justify-content: center">
+                  <el-button type="primary" @click="onSubmit">提交</el-button>
+                  <el-button>取消</el-button>
+                </div>
+              </el-form>
+            </div>
+          </el-card>
+          <el-card style="margin: 15px" header="申请记录">
+            <el-table
+              :data="tableData"
+              tooltip-effect="dark"
+              style="width: 100%"
+              @selection-change="handleSelectionChange"
+              v-loading="loading"
+            >
+              <el-table-column
+                prop="teacherName"
+                label="导师姓名"
+                width="150"
+              />
+              <el-table-column label="学生相关信息">
+                <el-table-column
+                  prop="authorName"
+                  label="学生姓名"
+                  width="120"
+                />
+                <el-table-column el-table-column label="学位审核信息">
+                  <el-table-column prop="updateTime" label="修改时间" />
+                  <el-table-column prop="otherStuValues" label="备注">
+                    <template #default="scope">
+                      <el-tooltip
+                        class="box-item"
+                        effect="dark"
+                        :content="scope.row.otherStuValues"
+                      >
+                        <div class="tooltip-ellipsis">
+                          {{ scope.row.otherStuValues }}
+                        </div>
+                      </el-tooltip>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="teacherStatus" label="导师审核">
+                    <template #default="scope">
+                      <el-tag v-if="scope.row.teacherStatus == 0"
+                        >未审核</el-tag
+                      >
+                      <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
+                        >审核不通过</el-tag
+                      >
+                      <el-tag type="success" v-if="scope.row.teacherStatus == 2"
+                        >审核通过</el-tag
+                      >
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="adminStatus" label="教务审核">
+                    <template #default="scope">
+                      <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
+                      <el-tag type="danger" v-if="scope.row.adminStatus == 1"
+                        >审核不通过</el-tag
+                      >
+                      <el-tag type="success" v-if="scope.row.adminStatus == 2"
+                        >审核通过</el-tag
+                      >
+                    </template>
+                  </el-table-column>
                 </el-table-column>
               </el-table-column>
-            </el-table-column>
-          </el-table>
-        </el-card>
+            </el-table>
+          </el-card>
+        </div>
       </div>
       <!-- <div>
         <el-divider content-position="left" v-if="role === 'student'"
@@ -280,6 +303,7 @@ import {
   apiDegreeDisapprove,
   apiDegreeComment,
 } from '@/api/degree';
+import { apiDefenseList } from '@/api/defense';
 
 const UserStore = useUserStore();
 
@@ -325,6 +349,7 @@ export default {
         id: 0,
         text: '',
       },
+      canUpload: false,
     };
   },
   created() {
@@ -334,9 +359,33 @@ export default {
     const userStateObj = JSON.parse(userStateStr);
     this.token = userStateObj.token;
     this.role = userStateObj.roles[0];
-    console.log(this.role);
-    this.getTableData();
-    // console.log(this.token)
+
+    console.log('进入学位申请', this.role);
+
+    if (this.role == 'student') {
+      apiDefenseList({
+        page: this.pageIndex,
+        limit: this.pageSize,
+        key: this.keywords,
+      }).then((data) => {
+        if (data && data.code === 0) {
+          this.loading = false;
+          const records = data.data?.records;
+
+          if (records.length > 0) {
+            const record = records[records.length - 1];
+            if (record.teacherStatus == 2 && record.adminStatus == 2) {
+              this.canUpload = true;
+            }
+          }
+          if (this.canUpload) {
+            this.getTableData();
+          }
+        }
+      });
+    } else {
+      this.getTableData();
+    }
   },
   methods: {
     getTableData() {
