@@ -381,6 +381,7 @@ export default {
               duration: 1500,
               onClose: () => {
                 this.getTableData();
+                useUserStore.userInfo.state=useUserStore.userInfo.state + 1;
               },
             });
           } else {

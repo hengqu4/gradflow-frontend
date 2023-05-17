@@ -1,4 +1,5 @@
 import request from './request';
+import qs from 'qs';
 
 export async function apiDefenseList(data) {
   return request
@@ -12,7 +13,13 @@ export async function apiDefenseList(data) {
 }
 
 export async function apiDefenseApprove(data) {
-  return request.post<any>('/api/defense/defform/approve', data).then((res) => {
+  return request.post<any>('/api/defense/defform/approve', qs.stringify({
+    id: data,
+  }),{
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  }).then((res) => {
     const data = res.data;
     return data;
   });
