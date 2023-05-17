@@ -47,10 +47,10 @@ export const useUserStore = defineStore({
     async logout() {
       let res = false;
 
-      // 临时处理redis关闭重启的问题，强行清空storage并跳转至login
-      console.log('removeItem');
-      localStorage.removeItem('userState');
-      router.push({ path: '/login' });
+      // // 临时处理redis关闭重启的问题，强行清空storage并跳转至login
+      // console.log('removeItem');
+      // localStorage.removeItem('userState');
+      // router.push({ path: '/login' });
 
       await logout(this.token).then((response) => {
         if (response.code == 0) {
