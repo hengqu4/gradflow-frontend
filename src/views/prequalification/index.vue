@@ -7,6 +7,7 @@
             class="upload-demo"
             drag
             action="/api/prequalification/upload"
+            :headers="uploadHeaders"
             :on-change="handleChange"
             :auto-upload="true"
             :on-success="uploadSuccess"
@@ -273,6 +274,9 @@ const UserStore = useUserStore();
 export default {
   data() {
     return {
+      uploadHeaders: {
+        'token': UserStore.token
+      },
       tableData: [
         // {
         //   authorName: '',

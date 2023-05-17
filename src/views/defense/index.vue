@@ -18,12 +18,13 @@
         </div>
         <div v-else>
           <el-card style="margin: 15px" header="提交答辩材料" class="card-box">
-            <!-- 
+            <!--
             action="http://localhost:9100/defense/defform/upload" -->
             <el-upload
               class="upload-demo"
               drag
               action="/api/defense/defform/upload"
+              :headers="uploadHeaders"
               :on-change="handleChange"
               :auto-upload="true"
               :on-success="uploadSuccess"
@@ -310,6 +311,9 @@ const UserStore = useUserStore();
 export default {
   data() {
     return {
+      uploadHeaders: {
+        'token': UserStore.token
+      },
       tableData: [
         // {
         //   authorName: '',
