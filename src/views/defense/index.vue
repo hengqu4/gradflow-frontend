@@ -4,10 +4,12 @@
       <!-- 上传模块 -->
       <div v-if="role === 'student'">
         <el-card style="margin: 15px" header="提交答辩材料" class="card-box">
+          <!-- 
+            action="http://localhost:9100/defense/defform/upload" -->
           <el-upload
             class="upload-demo"
             drag
-            action="http://localhost:9100/defense/defform/upload"
+            action="/api/defense/defform/upload"
             :on-change="handleChange"
             :auto-upload="true"
             :on-success="uploadSuccess"
@@ -34,9 +36,9 @@
             :border="true"
             v-loading="loading"
           >
-            <el-table-column prop="authorName" label="姓名" width="180">
+            <el-table-column prop="authorName" label="姓名" width="80">
             </el-table-column>
-            <el-table-column prop="filePath" label="答辩材料" width="180">
+            <el-table-column prop="filePath" label="答辩材料">
               <template #default="scope">
                 <el-link
                   type="primary"
@@ -49,9 +51,10 @@
                 <span v-else>暂未上传文件</span>
               </template>
             </el-table-column>
-            <el-table-column prop="updateTime" label="修改时间" width="180">
+            <el-table-column prop="updateTime" label="修改时间">
             </el-table-column>
-            <el-table-column prop="teacherName" label="导师"> </el-table-column>
+            <el-table-column prop="teacherName" label="导师" width="80">
+            </el-table-column>
             <el-table-column prop="teacherStatus" label="导师审核">
               <template #default="scope">
                 <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
@@ -90,153 +93,186 @@
       </div>
 
       <!-- 顶部栏操作 -->
-      <div
-        style="margin-top: 20px; margin-bottom: 20px"
-        v-if="role !== 'student'"
-      >
-        <el-form :inline="true" @keyup.enter.native="getTableData()">
-          <el-form-item>
-            <el-input
-              v-model="keywords"
-              placeholder="查询内容"
-              clearable
-            ></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button @click="getTableData()">查询</el-button>
-            <!-- <el-button type="primary" @click="batchApprove()" :disabled="dataSelections.length <= 0">全部通过</el-button>
-            <el-button type="danger" @click="batchDisapprove()" :disabled="dataSelections.length <= 0">全部不通过</el-button> -->
-          </el-form-item>
-        </el-form>
-      </div>
+      <div v-if="role !== 'student'">
+        <el-descriptions title="审核毕业答辩"></el-descriptions>
 
-      <!-- 老师端操作 -->
-      <el-table
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-        v-if="role !== 'student'"
-        v-loading="loading"
-      >
-        <el-table-column label="头像" width="100">
+        <div style="margin-top: 20px; margin-bottom: 20px">
+          <el-form :inline="true" @keyup.enter.native="getTableData()">
+            <el-form-item>
+              <el-input
+                v-model="keywords"
+                placeholder="查询内容"
+                clearable
+              ></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="getTableData()">查询</el-button>
+              <!-- <el-button type="primary" @click="batchApprove()" :disabled="dataSelections.length <= 0">全部通过</el-button>
+            <el-button type="danger" @click="batchDisapprove()" :disabled="dataSelections.length <= 0">全部不通过</el-button> -->
+            </el-form-item>
+          </el-form>
+        </div>
+
+        <!-- 老师端操作 -->
+        <el-table
+          :data="tableData"
+          tooltip-effect="dark"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+          v-loading="loading"
+        >
+          <!-- <el-table-column label="头像" width="100">
           <div>
             <el-avatar
               src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
             />
           </div>
-        </el-table-column>
-        <el-table-column prop="authorName" label="姓名" width="100">
-        </el-table-column>
-        <el-table-column prop="filePath" label="答辩材料" width="150">
-          <template #default="scope">
-            <el-link
-              type="primary"
-              v-if="scope.row.filePath !== null && scope.row.filePath !== ''"
-              @click="downLoad(scope.row.id, scope.row.filePath)"
-              >点击下载</el-link
-            >
-            <span v-else>暂未上传文件</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="updateTime" label="修改时间" width="200">
-        </el-table-column>
-        <el-table-column prop="teacherName" label="导师" width="100">
-        </el-table-column>
-        <el-table-column prop="teacherStatus" label="导师审核" width="200">
-          <template #default="scope">
-            <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
-            <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
-              >审核不通过</el-tag
-            >
-            <el-tag type="success" v-if="scope.row.teacherStatus == 2"
-              >审核通过</el-tag
-            >
-          </template>
-        </el-table-column>
-        <el-table-column prop="comment" label="导师评价">
-          <template #default="scope">
-            <a
-              title="点击可编辑"
-              @click="openEdit(scope.row)"
-              class="comment-text"
-              v-if="role === 'teacher'"
-            >
-              {{
+        </el-table-column> -->
+          <el-table-column prop="authorName" label="姓名" width="80">
+          </el-table-column>
+          <el-table-column prop="filePath" label="答辩材料">
+            <template #default="scope">
+              <el-link
+                type="primary"
+                v-if="scope.row.filePath !== null && scope.row.filePath !== ''"
+                @click="downLoad(scope.row.id, scope.row.filePath)"
+                >点击下载</el-link
+              >
+              <span v-else>暂未上传文件</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="updateTime" label="修改时间">
+          </el-table-column>
+          <el-table-column prop="teacherName" label="导师" width="80">
+          </el-table-column>
+          <el-table-column prop="teacherStatus" label="导师审核">
+            <template #default="scope">
+              <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
+              <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
+                >审核不通过</el-tag
+              >
+              <el-tag type="success" v-if="scope.row.teacherStatus == 2"
+                >审核通过</el-tag
+              >
+            </template>
+          </el-table-column>
+          <el-table-column prop="comment" label="导师评价">
+            <template #default="scope">
+              <a
+                title="点击可编辑"
+                @click="openEdit(scope.row)"
+                class="comment-text"
+                v-if="role === 'teacher'"
+              >
+                {{
+                  scope.row.comment === null || scope.row.comment === ''
+                    ? '无'
+                    : scope.row.comment
+                }}
+              </a>
+              <span v-if="role == 'admin'">{{
                 scope.row.comment === null || scope.row.comment === ''
                   ? '无'
                   : scope.row.comment
-              }}
-            </a>
-            <span v-if="role == 'admin'">{{
-              scope.row.comment === null || scope.row.comment === ''
-                ? '无'
-                : scope.row.comment
-            }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="adminStatus" label="教务审核" width="200">
-          <template #default="scope">
-            <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
-            <el-tag type="danger" v-if="scope.row.adminStatus == 1"
-              >审核不通过</el-tag
-            >
-            <el-tag type="success" v-if="scope.row.adminStatus == 2"
-              >审核通过</el-tag
-            >
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="200">
-          <template #default="scope">
+              }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="adminStatus" label="教务审核">
+            <template #default="scope">
+              <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
+              <el-tag type="danger" v-if="scope.row.adminStatus == 1"
+                >审核不通过</el-tag
+              >
+              <el-tag type="success" v-if="scope.row.adminStatus == 2"
+                >审核通过</el-tag
+              >
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="200">
+            <template #default="scope">
+              <div
+                v-if="
+                  (role == 'teacher' && scope.row.teacherStatus > 0) ||
+                  (role == 'admin' && scope.row.adminStatus > 0)
+                "
+              >
+                已审核
+              </div>
+
+              <div
+                v-else-if="
+                  role == 'teacher' ||
+                  (role == 'admin' && scope.row.teacherStatus == 2)
+                "
+              >
+                <el-button
+                  size="small"
+                  @click="handleApprove(scope.$index, scope.row)"
+                  type="primary"
+                  >通过
+                </el-button>
+                <el-button
+                  size="small"
+                  type="danger"
+                  @click="handleDisapprove(scope.$index, scope.row)"
+                  >不通过
+                </el-button>
+              </div>
+              <div v-else-if="role == 'admin' && scope.row.teacherStatus == 1">
+                导师审核未通过
+              </div>
+
+              <div v-else>待导师审核</div>
+            </template>
+
+            <!-- <template #default="scope">
             <el-button
               size="small"
               v-if="action === false"
+              type="primary"
               @click="handleApprove(scope.$index, scope.row)"
-              >通过</el-button
-            >
+              >通过
+            </el-button>
             <el-button
               size="small"
               v-if="action === false"
               type="danger"
               @click="handleDisapprove(scope.$index, scope.row)"
-              >不通过</el-button
             >
+              不通过
+            </el-button>
             <el-tag type="success" v-if="action === true">已进行操作</el-tag>
-          </template>
-        </el-table-column>
-      </el-table>
+          </template> -->
+          </el-table-column>
+        </el-table>
 
-      <div v-if="role !== 'student'" style="margin-top: 20px">
-        <el-pagination
-          @size-change="sizeChangeHandle"
-          @current-change="currentChangeHandle"
-          :current-page="pageIndex"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="pageSize"
-          :total="totalPage"
-          hide-on-single-page
-          layout="total, sizes, prev, pager, next, jumper"
-          style="justify-content: center"
-        ></el-pagination>
-      </div>
-
-      <el-dialog
-        title="编辑评价"
-        v-model="dialogVisible"
-        width="30%"
-        v-if="role !== 'student'"
-      >
-        <el-input
-          v-model="comment.text"
-          :rows="5"
-          type="textarea"
-          placeholder="请输出评价..."
-        />
-        <div slot="footer" class="dialog-button">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitComment">确 定</el-button>
+        <div style="margin-top: 20px">
+          <el-pagination
+            @size-change="sizeChangeHandle"
+            @current-change="currentChangeHandle"
+            :current-page="pageIndex"
+            :page-sizes="[10, 20, 50, 100]"
+            :page-size="pageSize"
+            :total="totalPage"
+            hide-on-single-page
+            layout="total, sizes, prev, pager, next, jumper"
+            style="justify-content: center"
+          ></el-pagination>
         </div>
-      </el-dialog>
+
+        <el-dialog title="编辑评价" v-model="dialogVisible" width="30%">
+          <el-input
+            v-model="comment.text"
+            :rows="5"
+            type="textarea"
+            placeholder="请输出评价..."
+          />
+          <div slot="footer" class="dialog-button">
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="submitComment">确 定</el-button>
+          </div>
+        </el-dialog>
+      </div>
     </div>
   </div>
 </template>
@@ -257,15 +293,15 @@ export default {
   data() {
     return {
       tableData: [
-        {
-          authorName: '',
-          filePath: '',
-          updateTime: '',
-          teacherName: '',
-          teacherStatus: 0,
-          comment: '',
-          adminStatus: 0,
-        },
+        // {
+        //   authorName: '',
+        //   filePath: '',
+        //   updateTime: '',
+        //   teacherName: '',
+        //   teacherStatus: 0,
+        //   comment: '',
+        //   adminStatus: 0,
+        // },
       ],
       keywords: '',
       pageIndex: 1,
@@ -341,7 +377,7 @@ export default {
     },
     approve(id) {
       // console.log(id)
-      this.$confirm(`确定让这篇论文审核通过吗? 注意该过程不可逆`, '提示', {
+      this.$confirm(`确定让该毕业答辩通过吗? 注意该过程不可逆`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
@@ -363,7 +399,7 @@ export default {
       });
     },
     disapprove(id) {
-      this.$confirm(`确定让这篇论文审核通过吗? 注意该过程不可逆`, '提示', {
+      this.$confirm(`确定让该毕业答辩通过吗? 注意该过程不可逆`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',

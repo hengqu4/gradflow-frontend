@@ -76,16 +76,20 @@
             <el-table-column label="学生相关信息">
               <el-table-column prop="authorName" label="学生姓名" width="120" />
               <el-table-column el-table-column label="学位审核信息">
-                <el-table-column
-                  prop="updateTime"
-                  label="修改时间"
-                  width="250"
-                />
-                <el-table-column
-                  prop="otherStuValues"
-                  label="备注"
-                  width="600"
-                />
+                <el-table-column prop="updateTime" label="修改时间" />
+                <el-table-column prop="otherStuValues" label="备注">
+                  <template #default="scope">
+                    <el-tooltip
+                      class="box-item"
+                      effect="dark"
+                      :content="scope.row.otherStuValues"
+                    >
+                      <div class="tooltip-ellipsis">
+                        {{ scope.row.otherStuValues }}
+                      </div>
+                    </el-tooltip>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="teacherStatus" label="导师审核">
                   <template #default="scope">
                     <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
@@ -119,98 +123,149 @@
         >
       </div> -->
 
-      <!-- 老师端操作 -->
-      <el-table
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-        v-if="role !== 'student'"
-        v-loading="loading"
-      >
-        <el-table-column prop="teacherName" label="导师姓名" width="150" />
-        <el-table-column label="学生相关信息">
-          <el-table-column prop="authorName" label="学生姓名" width="120" />
-          <el-table-column el-table-column label="学位审核信息">
-            <el-table-column prop="updateTime" label="修改时间" width="250" />
-            <el-table-column prop="otherValues" label="备注" width="600" />
-            <el-table-column prop="teacherStatus" label="导师审核">
-              <template #default="scope">
-                <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
-                <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
-                  >审核不通过</el-tag
-                >
-                <el-tag type="success" v-if="scope.row.teacherStatus == 2"
-                  >审核通过</el-tag
-                >
-              </template>
-            </el-table-column>
-            <el-table-column prop="adminStatus" label="教务审核">
-              <template #default="scope">
-                <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
-                <el-tag type="danger" v-if="scope.row.adminStatus == 1"
-                  >审核不通过</el-tag
-                >
-                <el-tag type="success" v-if="scope.row.adminStatus == 2"
-                  >审核通过</el-tag
-                >
-              </template>
-            </el-table-column>
-            <el-table-column label="操作">
-              <template #default="scope">
+      <div v-if="role !== 'student'">
+        <el-descriptions title="审核学位申请"></el-descriptions>
+        <div style="margin-top: 20px"></div>
+        <!-- 老师端操作 -->
+        <el-table
+          :data="tableData"
+          tooltip-effect="dark"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+          v-loading="loading"
+        >
+          <el-table-column prop="teacherName" label="导师姓名" width="150" />
+          <el-table-column label="学生相关信息">
+            <el-table-column prop="authorName" label="学生姓名" width="120" />
+            <el-table-column el-table-column label="学位审核信息">
+              <el-table-column prop="updateTime" label="修改时间" />
+              <el-table-column prop="otherStuValues" label="备注">
+                <template #default="scope">
+                  <el-tooltip
+                    class="box-item"
+                    effect="dark"
+                    :content="scope.row.otherStuValues"
+                  >
+                    <div class="tooltip-ellipsis">
+                      {{ scope.row.otherStuValues }}
+                    </div>
+                  </el-tooltip>
+                </template>
+              </el-table-column>
+              <el-table-column prop="teacherStatus" label="导师审核">
+                <template #default="scope">
+                  <el-tag v-if="scope.row.teacherStatus == 0">未审核</el-tag>
+                  <el-tag type="danger" v-if="scope.row.teacherStatus == 1"
+                    >审核不通过</el-tag
+                  >
+                  <el-tag type="success" v-if="scope.row.teacherStatus == 2"
+                    >审核通过</el-tag
+                  >
+                </template>
+              </el-table-column>
+              <el-table-column prop="adminStatus" label="教务审核">
+                <template #default="scope">
+                  <el-tag v-if="scope.row.adminStatus == 0">未审核</el-tag>
+                  <el-tag type="danger" v-if="scope.row.adminStatus == 1"
+                    >审核不通过
+                  </el-tag>
+                  <el-tag type="success" v-if="scope.row.adminStatus == 2"
+                    >审核通过
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作">
+                <template #default="scope">
+                  <div
+                    v-if="
+                      (role == 'teacher' && scope.row.teacherStatus > 0) ||
+                      (role == 'admin' && scope.row.adminStatus > 0)
+                    "
+                  >
+                    已审核
+                  </div>
+                  <div
+                    v-else-if="
+                      role == 'teacher' ||
+                      (role == 'admin' && scope.row.teacherStatus == 2)
+                    "
+                  >
+                    <el-button
+                      size="small"
+                      @click="handleApprove(scope.$index, scope.row)"
+                      type="primary"
+                      >通过
+                    </el-button>
+                    <el-button
+                      size="small"
+                      type="danger"
+                      @click="handleDisapprove(scope.$index, scope.row)"
+                      >不通过
+                    </el-button>
+                  </div>
+                  <div
+                    v-else-if="role == 'admin' && scope.row.teacherStatus == 1"
+                  >
+                    导师审核未通过
+                  </div>
+
+                  <div v-else>待导师审核</div>
+                </template>
+
+                <!-- <template #default="scope">
                 <el-button
                   size="small"
                   v-if="action === false"
                   @click="handleApprove(scope.$index, scope.row)"
-                  >通过</el-button
+                  type="primary"
                 >
+                  通过
+                </el-button>
                 <el-button
                   size="small"
                   v-if="action === false"
                   type="danger"
                   @click="handleDisapprove(scope.$index, scope.row)"
-                  >不通过</el-button
                 >
+                  不通过
+                </el-button>
                 <el-tag type="success" v-if="action === true"
-                  >已进行操作</el-tag
-                >
-              </template>
+                  >已进行操作
+                </el-tag>
+              </template> -->
+              </el-table-column>
             </el-table-column>
           </el-table-column>
-        </el-table-column>
-      </el-table>
+        </el-table>
 
-      <div v-if="role !== 'student'" style="margin-top: 20px">
-        <el-pagination
-          @size-change="sizeChangeHandle"
-          @current-change="currentChangeHandle"
-          :current-page="pageIndex"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="pageSize"
-          :total="totalPage"
-          hide-on-single-page
-          layout="total, sizes, prev, pager, next, jumper"
-          style="justify-content: center"
-        ></el-pagination>
-      </div>
-
-      <el-dialog
-        title="编辑评价"
-        v-model="dialogVisible"
-        width="30%"
-        v-if="role !== 'student'"
-      >
-        <el-input
-          v-model="comment.text"
-          :rows="5"
-          type="textarea"
-          placeholder="请输出评价..."
-        />
-        <div slot="footer" class="dialog-button">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitComment">确 定</el-button>
+        <div style="margin-top: 20px">
+          <el-pagination
+            @size-change="sizeChangeHandle"
+            @current-change="currentChangeHandle"
+            :current-page="pageIndex"
+            :page-sizes="[10, 20, 50, 100]"
+            :page-size="pageSize"
+            :total="totalPage"
+            hide-on-single-page
+            layout="total, sizes, prev, pager, next, jumper"
+            style="justify-content: center"
+          >
+          </el-pagination>
         </div>
-      </el-dialog>
+
+        <el-dialog title="编辑评价" v-model="dialogVisible" width="30%">
+          <el-input
+            v-model="comment.text"
+            :rows="5"
+            type="textarea"
+            placeholder="请输出评价..."
+          />
+          <div slot="footer" class="dialog-button">
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="submitComment">确 定</el-button>
+          </div>
+        </el-dialog>
+      </div>
     </div>
   </div>
 </template>
@@ -219,6 +274,12 @@ import { useUserStore } from '@/store/modules/user';
 import { UploadFilled } from '@element-plus/icons-vue';
 import { StarFilled } from '@element-plus/icons-vue';
 import { reactive } from 'vue';
+import {
+  apiDegreeList,
+  apiDegreeApprove,
+  apiDegreeDisapprove,
+  apiDegreeComment,
+} from '@/api/degree';
 
 const UserStore = useUserStore();
 
@@ -226,17 +287,17 @@ export default {
   data() {
     return {
       tableData: [
-        {
-          authorName: '王小虎',
-          filePath: 'ssss',
-          updateTime: '2016-05-02',
-          teacherName: 'qjk',
-          teacherStatus: 0,
-          comment: '垃圾',
-          adminStatus: 0,
-          otherValues: '默认值',
-          otherStuValues: '默认值',
-        },
+        // {
+        //   authorName: '',
+        //   filePath: '',
+        //   updateTime: '',
+        //   teacherName: '',
+        //   teacherStatus: 0,
+        //   comment: '',
+        //   adminStatus: 0,
+        //   otherValues: '',
+        //   otherStuValues: '',
+        // },
       ],
       myform: reactive({
         authorId: 51255000000,
@@ -280,32 +341,28 @@ export default {
   methods: {
     getTableData() {
       this.loading = true;
-      this.$request
-        .get('http://localhost:9150/degree/degreeform/list', {
-          params: {
-            page: this.pageIndex,
-            limit: this.pageSize,
-            key: this.keywords,
-          },
-        })
-        .then(({ data }) => {
-          this.loading = false;
 
-          if (data && data.code === 0) {
-            // console.log(data)
-            this.tableData = data.page.records;
-            // 遍历 tableData 数组，为每个对象的 otherValues 属性赋值
-            this.tableData.forEach((item) => {
-              item.otherValues =
-                '请在所有流程结束后进行学位审批，请注意：该过程不可逆，若需修改请联系教务处。';
-              item.otherStuValues =
-                '您的申请已经提交，如果学位状态长时间没变化，请询问老师或者教务人员';
-            });
-            this.totalPage = data.page.total;
-          } else {
-            this.tableData = [];
-          }
-        });
+      apiDegreeList({
+        page: this.pageIndex,
+        limit: this.pageSize,
+        key: this.keywords,
+      }).then((data) => {
+        this.loading = false;
+        if (data && data.code === 0) {
+          // console.log(data)
+          this.tableData = data.page.records;
+          // 遍历 tableData 数组，为每个对象的 otherValues 属性赋值
+          this.tableData.forEach((item) => {
+            item.otherValues =
+              '请在所有流程结束后进行学位审批，请注意：该过程不可逆，若需修改请联系教务处。';
+            item.otherStuValues =
+              '您的申请已经提交，如果学位状态长时间没变化，请询问老师或者教务人员';
+          });
+          this.totalPage = data.page.total;
+        } else {
+          this.tableData = [];
+        }
+      });
     },
     sizeChangeHandle(val) {
       this.pageSize = val;
@@ -338,22 +395,20 @@ export default {
         cancelButtonText: '取消',
         type: 'warning',
       }).then(() => {
-        this.$request
-          .post('http://localhost:9150/degree/degreedetail/commit', this.myform)
-          .then(({ data }) => {
-            if (data && data.code === 0) {
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.getTableData();
-                },
-              });
-            } else {
-              this.$message.error(data.msg);
-            }
-          });
+        apiDegreeComment(this.myform).then((data) => {
+          if (data && data.code === 0) {
+            this.$message({
+              message: '操作成功',
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.getTableData();
+              },
+            });
+          } else {
+            this.$message.error(data.msg);
+          }
+        });
       });
     },
     handleApprove(index, row) {
@@ -364,53 +419,83 @@ export default {
     },
     approve(id) {
       // console.log(id)
-      this.$confirm(`确定让这篇论文审核通过吗? 注意该过程不可逆`, '提示', {
+      this.$confirm(`确定让该学位申请通过吗? 注意该过程不可逆`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
       }).then(() => {
-        this.$request
-          .post('http://localhost:9150/degree/degreeform/approve?id=' + id)
-          .then(({ data }) => {
-            this.action = true;
-            if (data && data.code === 0) {
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.getTableData();
-                },
-              });
-            } else {
-              this.$message.error(data.msg);
-            }
-          });
+        apiDegreeApprove(id).then((data) => {
+          if (data && data.code === 0) {
+            this.$message({
+              message: '操作成功',
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.getTableData();
+              },
+            });
+          } else {
+            this.$message.error(data.msg);
+          }
+        });
+
+        // this.$request
+        //   .post('http://localhost:9150/degree/degreeform/approve?id=' + id)
+        //   .then(({ data }) => {
+        //     this.action = true;
+        //     if (data && data.code === 0) {
+        //       this.$message({
+        //         message: '操作成功',
+        //         type: 'success',
+        //         duration: 1500,
+        //         onClose: () => {
+        //           this.getTableData();
+        //         },
+        //       });
+        //     } else {
+        //       this.$message.error(data.msg);
+        //     }
+        //   });
       });
     },
     disapprove(id) {
-      this.$confirm(`确定让这篇论文审核通过吗? 注意该过程不可逆`, '提示', {
+      this.$confirm(`确定让该学位申请通过吗? 注意该过程不可逆`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
       }).then(() => {
-        this.$request
-          .post('http://localhost:9150/degree/degreeform/disapprove?id=' + id)
-          .then(({ data }) => {
-            this.action = true;
-            if (data && data.code === 0) {
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.getTableData();
-                },
-              });
-            } else {
-              this.$message.error(data.msg);
-            }
-          });
+        apiDegreeDisapprove(id).then((data) => {
+          if (data && data.code === 0) {
+            this.$message({
+              message: '操作成功',
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.getTableData();
+              },
+            });
+          } else {
+            this.$message.error(data.msg);
+          }
+        });
+
+        // this.$request
+        //   .post('http://localhost:9150/degree/degreeform/disapprove?id=' + id)
+        //   .then(({ data }) => {
+        //     this.action = true;
+        //     if (data && data.code === 0) {
+        //       this.$message({
+        //         message: '操作成功',
+        //         type: 'success',
+        //         duration: 1500,
+        //         onClose: () => {
+        //           this.getTableData();
+        //         },
+        //       });
+        //     } else {
+        //       this.$message.error(data.msg);
+        //     }
+        //   });
       });
     },
     openEdit(row) {

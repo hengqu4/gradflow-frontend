@@ -2,7 +2,7 @@ import request from './request';
 
 export async function apiReviewList(data) {
   return request
-    .get<any>('api/review/list', {
+    .get<any>('/api/paper-review/list', {
       params: data,
     })
     .then((res) => {
@@ -12,14 +12,14 @@ export async function apiReviewList(data) {
 }
 
 export async function apiReviewApprove(data) {
-  return request.post<any>('api/review/approve', data).then((res) => {
+  return request.post<any>('/api/paper-review/approve', data).then((res) => {
     const data = res.data;
     return data;
   });
 }
 
 export async function apiReviewDisapprove(data) {
-  return request.post<any>('api/review/disapprove', data).then((res) => {
+  return request.post<any>('/api/paper-review/disapprove', data).then((res) => {
     const data = res.data;
     return data;
   });
@@ -27,9 +27,7 @@ export async function apiReviewDisapprove(data) {
 
 export async function apiReviewComment(comment_id, data) {
   return request
-    .post<any>(`api/review/comment/${comment_id}`, {
-      data: data,
-    })
+    .post<any>(`/api/paper-review/comment/${comment_id}`, data)
     .then((res) => {
       const data = res.data;
       return data;
@@ -38,7 +36,7 @@ export async function apiReviewComment(comment_id, data) {
 
 export async function apiReviewDownload(id, fileName) {
   return request
-    .get<any>(`api/review/download/${id}/${fileName}`, {
+    .get<any>(`/api/paper-review/download/${id}/${fileName}`, {
       responseType: 'blob',
     })
     .then((res) => {

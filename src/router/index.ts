@@ -99,7 +99,7 @@ export const constantRoutes: Array<RouteRecordRaw & extendRoute> = [
         name: 'prequalification',
         meta: {
           title: '学生预审表',
-          icon: 'DocumentChecked',
+          icon: 'Document',
           affix: true,
           role: ['other'],
         },
@@ -118,8 +118,8 @@ export const constantRoutes: Array<RouteRecordRaw & extendRoute> = [
         component: () => import('@/views/review/index.vue'),
         name: 'review',
         meta: {
-          title: '论文初审',
-          icon: 'DocumentChecked',
+          title: '毕业论文',
+          icon: 'Reading',
           affix: true,
           role: ['other'],
         },
@@ -138,7 +138,7 @@ export const constantRoutes: Array<RouteRecordRaw & extendRoute> = [
         name: 'defense',
         meta: {
           title: '毕业答辩',
-          icon: 'CircleCheck',
+          icon: 'Postcard',
           affix: true,
           role: ['other'],
         },

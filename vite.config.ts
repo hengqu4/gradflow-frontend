@@ -83,7 +83,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
-        '/api/review': {
+        '/api/paper-review': {
           target: 'http://localhost:9060',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
