@@ -107,7 +107,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     // },
 
     build: {
-      outDir: 'docs',
+      outDir: 'build',
       //   terserOptions: {
       //     compress: {
       //       drop_console: true,
