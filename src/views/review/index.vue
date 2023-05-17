@@ -20,13 +20,14 @@
             <el-upload
               class="upload-demo"
               drag
-              action="/api/review/upload"
+              action="/api/paper-review/upload"
               :on-change="handleChange"
               :auto-upload="true"
               :on-success="uploadSuccess"
               :show-file-list="false"
               :on-error="uploadFail"
               :before-upload="beforeUpload"
+              :headers="{ token: this.token }"
             >
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
@@ -294,7 +295,7 @@ import {
   apiReviewDownload,
 } from '@/api/review';
 
-import { apiPrequalList } from '@/api/prequalification';
+// import { apiReviewList } from '@/api/review';
 
 const UserStore = useUserStore();
 
@@ -336,7 +337,7 @@ export default {
     console.log('论文审核 role', this.role);
 
     if (this.role == 'student') {
-      apiPrequalList({
+      apiReviewList({
         page: this.pageIndex,
         limit: this.pageSize,
         key: this.keywords,

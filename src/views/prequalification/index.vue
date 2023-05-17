@@ -13,6 +13,7 @@
             :show-file-list="false"
             :on-error="uploadFail"
             :before-upload="beforeUpload"
+            :headers="{ token: this.token }"
           >
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
             <div class="el-upload__text">拖动文件到这儿或<em>点击上传</em></div>
