@@ -10,7 +10,7 @@
         <!-- <h2>学位申请表</h2> -->
 
         <!-- 学生端操作 -->
-        <div v-if="!canUpload">
+        <!-- <div v-if="!canUpload">
           <div style="font-size: 20px">
             <div class="display-center">您没有访问权限！</div>
             <div class="display-center">请检查毕业答辩是否通过。</div>
@@ -22,8 +22,8 @@
               alt="403"
             />
           </div>
-        </div>
-        <div v-else>
+        </div> -->
+        <div>
           <el-card style="margin: 15px" header="学位申请表" class="card-box">
             <div
               style="
@@ -361,31 +361,32 @@ export default {
     this.role = userStateObj.roles[0];
 
     console.log('进入学位申请', this.role);
+    this.getTableData();
 
-    if (this.role == 'student') {
-      apiDefenseList({
-        page: this.pageIndex,
-        limit: this.pageSize,
-        key: this.keywords,
-      }).then((data) => {
-        if (data && data.code === 0) {
-          this.loading = false;
-          const records = data.data?.records;
+    // if (this.role == 'student') {
+    //   apiDefenseList({
+    //     page: this.pageIndex,
+    //     limit: this.pageSize,
+    //     key: this.keywords,
+    //   }).then((data) => {
+    //     if (data && data.code === 0) {
+    //       this.loading = false;
+    //       const records = data.data?.records;
 
-          if (records.length > 0) {
-            const record = records[records.length - 1];
-            if (record.teacherStatus == 2 && record.adminStatus == 2) {
-              this.canUpload = true;
-            }
-          }
-          if (this.canUpload) {
-            this.getTableData();
-          }
-        }
-      });
-    } else {
-      this.getTableData();
-    }
+    //       if (records.length > 0) {
+    //         const record = records[records.length - 1];
+    //         if (record.teacherStatus == 2 && record.adminStatus == 2) {
+    //           this.canUpload = true;
+    //         }
+    //       }
+    //       if (this.canUpload) {
+    //         this.getTableData();
+    //       }
+    //     }
+    //   });
+    // } else {
+    //   this.getTableData();
+    // }
   },
   methods: {
     getTableData() {
